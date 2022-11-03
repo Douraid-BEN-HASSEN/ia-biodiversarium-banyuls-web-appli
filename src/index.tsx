@@ -18,7 +18,7 @@ root.render(
   <React.StrictMode>    
     {/* PARTIE 1 */}
     <Menu/>
-
+    <TestImage />
     {/* PARTIE 2: Caméra */}
     <Camera/>
 
