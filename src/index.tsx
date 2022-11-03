@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import TestImage from "./Zoom/resize_img";
 import './index.css';
 
-import { Col, Row } from 'react-bootstrap';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'jquery/dist/jquery.min.js'
 import "bootstrap/dist/js/bootstrap.js";
 
-import { Menu, Camera, FishInformation } from './Component';
+import { DrawerAppBar, Camera, FishInformation  } from './Component';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,8 +16,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>    
     {/* PARTIE 1 */}
-    <Menu/>
     <TestImage />
+    <DrawerAppBar/>
     {/* PARTIE 2: Caméra */}
     <Camera/>
 

@@ -22,33 +22,35 @@ const WebcamComponent = () => {
       () => {
         const imageSrc = webcamRef.current.getScreenshot();
         console.log(imageSrc)
+        document.getElementById('img')?.setAttribute('src', imageSrc);
       },
       [webcamRef]
     );
     return (
       <>
+        <img id="img" src="" height={900}></img>
+        <div className="col text-center">
+            <Button className="btn-primary" onClick={capture}>
+                <CircleFill className="m-3"/>
+            </Button>
+        </div>
         <Webcam
+            style={{visibility: 'hidden'}}
             audio={false}
             height={720}
             width={1280}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
-        />
-        <div className="col text-center">
-            <Button className="btn-primary" onClick={capture}>
-                <CircleFill className="m-3"/>
-            </Button>
-        </div>
-        
+        />        
       </>
     );
 };
 
 const Camera : React.FC<cameraProps> = React.memo(({}) => {
     return <>
-        <Row className="m-3">
-            <WebcamComponent/>
+        <Row className="row">
+          <WebcamComponent/>
         </Row>
     </>;
 });

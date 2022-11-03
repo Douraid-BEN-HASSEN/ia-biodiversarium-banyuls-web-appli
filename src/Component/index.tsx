@@ -1,9 +1,10 @@
 import FishInformation from "./fish-information.component";
 import Camera from "./camera.component";
-import Menu from "./menu.component";
+import DrawerAppBar from "./appbar.compenent";
+
 
 export {
-    Menu,
+    DrawerAppBar,
     Camera,
     FishInformation
 }
