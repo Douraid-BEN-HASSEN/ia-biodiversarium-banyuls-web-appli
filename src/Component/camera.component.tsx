@@ -69,8 +69,13 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
           <Col>
             <Row>
               <div className="ms-1 text-primary">
-                <Gear className="me-2"/>Veuillez activer la caméra
-                <img src={require('../Assets/enable_camera.png')} style={{width: '20rem'}}></img>
+                <div className="row-12">
+                  <Gear className="me-2"/>Veuillez activer la caméra
+                </div>
+                <div className="row-12">
+                  <img src={require('../Assets/enable_camera.png')} style={{width: '20rem'}}></img>
+                </div>
+                
               </div>
             </Row>
             <Row>
