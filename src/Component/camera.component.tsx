@@ -9,8 +9,6 @@ interface cameraProps {
 
 };
 
-
-
 const Camera : React.FC<cameraProps> = React.memo(({}) => {
   const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>("pending")
 
