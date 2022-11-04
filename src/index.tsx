@@ -2,21 +2,34 @@ import './index.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
 
-import { FileUploader } from './Component';
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import 'jquery/dist/jquery.min.js'
+import "bootstrap/dist/js/bootstrap.js";
+
+import { Appbar, Camera, FileUploader, FishInformation  } from './Component';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-// root.render(
-//   <React.StrictMode>
-//     Application Aquarium
-//     <Camera/>
-//   </React.StrictMode>
-// );
+root.render(
+  <React.StrictMode>    
+    {/* PARTIE 1 */}
+    {/* <Appbar/> */}
 
-root.render(<FileUploader />)
+    <FileUploader />
+
+    {/* PARTIE 2: Caméra */}
+    {/* <Camera/> */}
+
+    {/* PARTIE 3: Informations poisson */}
+    {/* <FishInformation/> */}
+
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

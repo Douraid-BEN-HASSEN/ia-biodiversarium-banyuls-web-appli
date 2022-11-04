@@ -1,5 +1,12 @@
-import Camera from "./Camera";
+import FishInformation from "./fish-information.component";
+import Camera from "./camera.component";
+import Appbar from "./appbar.compenent";
 import FileUploader from "./FileUploader";
+
+
 export {
-    Camera , FileUploader
+    Appbar,
+    Camera,
+    FishInformation,
+    FileUploader
 }
