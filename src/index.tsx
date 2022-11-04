@@ -15,8 +15,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>    
     {/* PARTIE 1 */}
-    <Appbar/>
-    
+    <DrawerAppBar/>
+
     {/* PARTIE 2: Caméra */}
     <Camera/>
 
