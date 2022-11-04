@@ -16,6 +16,22 @@ const videoConstraints = {
     facingMode: "user"
 };
 
+const zoom = (
+  event: React.MouseEvent<HTMLHeadingElement>
+) => {
+  event.stopPropagation();
+  const heading = event.currentTarget;
+  
+  console.log(
+      "Element name: ",
+      heading.tagName,
+      "Width: ",
+      heading.clientWidth,
+      "Height: ",
+      heading.clientHeight
+  );
+};
+
 const WebcamComponent = () => {
     const webcamRef = React.useRef<any>(null);
     const capture = React.useCallback(
@@ -39,6 +55,7 @@ const WebcamComponent = () => {
             audio={false}
             height={720}
             width={1280}
+            object-fit='fill'
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
@@ -49,7 +66,7 @@ const WebcamComponent = () => {
 
 const Camera : React.FC<cameraProps> = React.memo(({}) => {
     return <>
-        <Row className="row">
+        <Row className="row" onClick={zoom}>
           <WebcamComponent/>
         </Row>
     </>;

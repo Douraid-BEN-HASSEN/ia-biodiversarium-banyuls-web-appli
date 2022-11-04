@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-
+import TestImage from './Zoom/resize_img'
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'jquery/dist/jquery.min.js'
 import "bootstrap/dist/js/bootstrap.js";
@@ -16,8 +16,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>    
     {/* PARTIE 1 */}
-    <TestImage />
     <DrawerAppBar/>
+    <TestImage />
     {/* PARTIE 2: Caméra */}
     <Camera/>
 

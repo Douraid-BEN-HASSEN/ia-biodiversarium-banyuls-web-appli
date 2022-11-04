@@ -27,7 +27,7 @@ const  DrawerAppBar : React.FC<AppbarProps> = React.memo(({window})  => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar component="nav">
+      <AppBar component="nav" position="sticky">
         <Toolbar>
           <IconButton
             color="inherit"
