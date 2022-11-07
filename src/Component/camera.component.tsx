@@ -126,16 +126,8 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
   }
 
   const saveScreenshot = () => {
-    let canvas = document.createElement('canvas');
-    let video = document.querySelector('video');
-    
-    canvas.width = 1920;
-    canvas.height = 1080;
-    
-    let ctx = canvas.getContext('2d');
-    if(ctx && video) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      let image = canvas.toDataURL('image/jpeg');
+    let image = document.getElementById('imageInput');
+    if(image) {
       console.log(image);
     }
   }
