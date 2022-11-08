@@ -1,23 +1,29 @@
 import React from 'react';
 import './App.css';
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import 'jquery/dist/jquery.min.js'
-import "bootstrap/dist/js/bootstrap.js";
-
-import {DrawerAppBar, Camera, FishInformation} from './Component';
+import Camera from './Component/Camera';
+import { Box, Grid } from '@mui/material';
+import DrawerAppBar from './Component/AppBar';
+import FishInformation from './Component/FishInformation';
 
 function App() {
     return (
         <>
-            {/* PARTIE 1 */}
-            <DrawerAppBar/>
+            <DrawerAppBar />
+            <Grid
+                sx={{ p: 5}}
+                container
+                justifyContent='center'
+            >
+                <Grid item>
+                    <Camera />
+                </Grid>
 
-            {/* PARTIE 2: Caméra */}
-            <Camera/>
 
-            {/* PARTIE 3: Informations poisson */}
-            <FishInformation/>
+                <Grid item>
+                    <FishInformation />
+                </Grid>
+            </Grid>
         </>
     );
 }
