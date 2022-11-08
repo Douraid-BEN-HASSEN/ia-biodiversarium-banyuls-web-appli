@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 
 // bootstrap
 import { Button } from 'react-bootstrap';
@@ -9,9 +10,10 @@ interface cameraProps {
 };
 
 const Camera : React.FC<cameraProps> = React.memo(({}) => {
-  const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>("pending")
 
+  const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>('pending');
   const [counter, setCounter] = useState(0);
+  const [iaEngine, setIaEngine] = useState<'imerir' | 'google'>('imerir');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,6 +47,10 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
       /* handle the error */
       setCameraStatus(err.toString().includes('Permission denied') ? 'refused' : 'errored')
     });
+  };
+
+  const onIaEngineChange = (sender: any) => {
+    setIaEngine(sender?.target?.value ? sender.target.value : 'imerir');
   };
 
   const cameraStatusSection = () => {    
@@ -100,12 +106,12 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
           <div className="col-12">
             <div className="row mt-3">
               <div className="col-4">
-                <label htmlFor="serverCB">Moteur IA:</label>
+                <label htmlFor="iaEngineCB">Moteur IA:</label>
               </div>
               <div className="col-8">
-                <select className="form-control form-control-sm" aria-label="Sélectionner une IA" id="serverCB">
-                  <option value="1">IA Google</option>
-                  <option value="2">IA Imerir</option>
+                <select className="form-control form-control-sm" id="iaEngineCB" onChange={onIaEngineChange}>
+                  <option value="imerir">IA Imerir</option>
+                  <option value="google">IA Google</option>
                 </select>
               </div>
             </div>
@@ -139,7 +145,16 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
       if(cameraStatus === 'enabled' && ctx && video) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         let image = canvas.toDataURL('image/jpeg');
-        console.log(image);
+
+        console.log(iaEngine)
+        // TODO: envoi serveur
+        axios.post(`SERVER_URL`, {
+          image: image,
+          ia: iaEngine ? iaEngine : 'google'
+        })
+        .then(res => {
+          setCameraStatus('enabled');
+        })
       }
     }
     
