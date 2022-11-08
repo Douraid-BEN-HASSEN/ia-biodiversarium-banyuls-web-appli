@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>    
+  <React.StrictMode> 
     {/* PARTIE 1 */}
     <DrawerAppBar/>
 
@@ -22,7 +22,6 @@ root.render(
 
     {/* PARTIE 3: Informations poisson */}
     <FishInformation/>
-
   </React.StrictMode>
 );
 

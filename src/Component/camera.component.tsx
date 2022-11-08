@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 // bootstrap
-import { Row, Col } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import { Gear, XCircle, CheckCircle, RecordCircle } from 'react-bootstrap-icons';
+import { Gear, XCircle, RecordCircle } from 'react-bootstrap-icons';
 
 interface cameraProps {
 
@@ -13,8 +12,6 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
   const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>("pending")
 
   const [counter, setCounter] = useState(0);
-
-  const [originalImage, setOriginalImage] = useState<string>('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,8 +35,10 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
       setCameraStatus('enabled')
       var video = document.querySelector('video');
       if(video) {
-        video.srcObject = stream;
-        video.play();        
+        video.srcObject = stream; 
+        video.oncanplay = (sender) => {
+          (sender.target as HTMLVideoElement).hidden = false;
+        };
       }    
     })
     .catch((err) => {
@@ -48,28 +47,12 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
     });
   };
 
-  const cameraDisplay = () => {
-    let canvas = document.createElement('canvas');
-    let video = document.querySelector('video');
-    
-    canvas.width = window.screen.width;
-    canvas.height = window.screen.height;
-    
-    let ctx = canvas.getContext('2d');
-    if(cameraStatus == 'enabled' && ctx && video) {
-      console.log('ICI')
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      let image = canvas.toDataURL('image/jpeg');
-      document.getElementById('imageInput')?.setAttribute('src', image);
-    }
-  }
-
   const cameraStatusSection = () => {    
-    if(cameraStatus == 'pending') {
+    if(cameraStatus === 'pending') {
       return <>
         <div id="cameraStatusSection" className="text-center m-3">
-          <Col>
-            <Row>
+          <div className="col">
+            <div className="row">
               <div className="ms-1 text-primary">
                 <div className="row-12 mb-2">
                   <Gear className="me-2"/>Veuillez activer la caméra
@@ -79,16 +62,16 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
                 </div>
                 
               </div>
-            </Row>
-            <Row>
+            </div>
+            <div className="row">
               <div className="col text-center">
                 <Button className="mt-2" onClick={askForPermission}>Activer la caméra</Button>
               </div>
-            </Row>
-          </Col>
+            </div>
+          </div>
         </div>
       </>;   
-    } else if(cameraStatus == 'refused') {
+    } else if(cameraStatus === 'refused') {
       return <>
         <div id="cameraStatusSection" className="text-center m-3">
           <div className="row-12 mb-2">
@@ -99,7 +82,7 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
           </div>
         </div>
       </>;
-    } else if(cameraStatus == 'errored') {
+    } else if(cameraStatus === 'errored') {
       return <>
         <div id="cameraStatusSection" className="text-center m-3">
           <div className="row-12 mb-2">
@@ -110,36 +93,34 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
           </div>
         </div>
       </>;
-    } else if(cameraStatus == 'enabled') {
-      cameraDisplay();
+    } else if(cameraStatus === 'enabled') {
       return <>
-      <div className="text-center">
-        <img id="imageInput"></img>        
+      <div className="container">
+          <div className="text-center">
+          <div className="col-12">
+            <div className="row mt-3">
+              <div className="col-4">
+                <label htmlFor="serverCB">Moteur IA:</label>
+              </div>
+              <div className="col-8">
+                <select className="form-control form-control-sm" aria-label="Sélectionner une IA" id="serverCB">
+                  <option value="1">IA Google</option>
+                  <option value="2">IA Imerir</option>
+                </select>
+              </div>
+            </div>
+
+              
+          </div>
           <h1><RecordCircle onClick={takeScreenshot}></RecordCircle></h1>
         </div>
+      </div>
       </>;
-    } else if(cameraStatus == 'captured') {
+    } else if(cameraStatus === 'captured') {
       return <>
-        <img id="imageInput" src={originalImage}></img>
-        <form className="m-2">
-          <div className="form-group row">
-            <label htmlFor="serverCB" className="col-sm-2 col-form-label">IA: </label>
-            <div className="col-sm-10">
-            <select className="form-control form-control-sm" aria-label="Sélectionner une IA" id="serverCB">
-              <option value="1">IA Google</option>
-              <option value="2">IA Imerir</option>
-            </select>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <h1>
-              <XCircle className="me-1 text-danger" onClick={cancelScreenshot}></XCircle>
-              <CheckCircle className="text-success" onClick={saveScreenshot}></CheckCircle>
-            </h1>
-          </div>
-
-        </form>
+        <div className="text-center mt-2">
+          <i>Traitement en cours...</i>
+        </div>
       </>;
     }
   }
@@ -147,39 +128,37 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
   const takeScreenshot = () => {
     setCameraStatus('captured');
     
-    let image = document.getElementById('imageInput') as HTMLImageElement | null;
+    let canvas = document.createElement('canvas');
+    let video = document.querySelector('video');
     
-    if(image) {
-      const dataUrl = image.getAttribute('src');
-      if(dataUrl) setOriginalImage(dataUrl);
+    if(video) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      let ctx = canvas.getContext('2d');
+      if(cameraStatus === 'enabled' && ctx && video) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let image = canvas.toDataURL('image/jpeg');
+        console.log(image);
+      }
     }
     
-  };
-
-  const saveScreenshot = () => {
-    let image = document.getElementById('imageInput');
-    if(image) {
-      console.log(image);
-    }
-  }
-
-  const cancelScreenshot = () => {
-    setCameraStatus('enabled');
+    
   };
 
   const videoInputsection = () => {
     return <>
-      <video hidden={true}></video>
+      <video hidden={true} autoPlay playsInline></video>
     </>;
   }
   
   return <>
-      <Row className="row">
+      <div className="row">
         <>
-          {cameraStatusSection()}
           {videoInputsection()}
+          {cameraStatusSection()}
         </>
-      </Row>
+      </div>
   </>;
 });
 
