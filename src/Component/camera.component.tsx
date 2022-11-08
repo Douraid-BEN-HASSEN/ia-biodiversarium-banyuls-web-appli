@@ -14,6 +14,8 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
 
   const [counter, setCounter] = useState(0);
 
+  const [originalImage, setOriginalImage] = useState<string>('');
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCounter((prevCounter) => prevCounter + 1);
@@ -25,9 +27,8 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
   const askForPermission = () => {
     const constraints: MediaStreamConstraints = {
       audio: false,
-      video: { 
-        width: 1920, 
-        height: 1080
+      video: {
+        facingMode: 'environment'
       }
     };
   
@@ -51,12 +52,13 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
     let canvas = document.createElement('canvas');
     let video = document.querySelector('video');
     
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = window.screen.width;
+    canvas.height = window.screen.height;
     
     let ctx = canvas.getContext('2d');
     if(cameraStatus == 'enabled' && ctx && video) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height );
+      console.log('ICI')
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       let image = canvas.toDataURL('image/jpeg');
       document.getElementById('imageInput')?.setAttribute('src', image);
     }
@@ -65,22 +67,22 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
   const cameraStatusSection = () => {    
     if(cameraStatus == 'pending') {
       return <>
-        <div id="cameraStatusSection" className="m-3">
+        <div id="cameraStatusSection" className="text-center m-3">
           <Col>
             <Row>
               <div className="ms-1 text-primary">
-                <div className="row-12">
+                <div className="row-12 mb-2">
                   <Gear className="me-2"/>Veuillez activer la caméra
                 </div>
                 <div className="row-12">
-                  <img src={require('../Assets/enable_camera.png')} style={{width: '20rem'}}></img>
+                  <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
                 </div>
                 
               </div>
             </Row>
             <Row>
               <div className="col text-center">
-                <Button className="mt-1" onClick={askForPermission}>Activer la caméra</Button>
+                <Button className="mt-2" onClick={askForPermission}>Activer la caméra</Button>
               </div>
             </Row>
           </Col>
@@ -88,42 +90,71 @@ const Camera : React.FC<cameraProps> = React.memo(({}) => {
       </>;   
     } else if(cameraStatus == 'refused') {
       return <>
-        <div id="cameraStatusSection" className="m-3">
-          <XCircle className="me-1"/><p>La caméra est désactivée ! Veuillez autoriser la caméra</p>
-          <img src={require('../Assets/enable_camera.png')}></img>
+        <div id="cameraStatusSection" className="text-center m-3">
+          <div className="row-12 mb-2">
+            <XCircle className="me-1"/>La caméra est désactivée ! Veuillez autoriser la caméra
+          </div>
+          <div className="row-12">
+            <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
+          </div>
         </div>
       </>;
     } else if(cameraStatus == 'errored') {
       return <>
-        <div id="cameraStatusSection" className="m-3">
-          <XCircle className="me-1"/><p>La caméra est désactivée ! Veuillez autoriser la caméra</p>
-          <img src={require('../Assets/enable_camera.png')}></img>
+        <div id="cameraStatusSection" className="text-center m-3">
+          <div className="row-12 mb-2">
+            <XCircle className="me-1"/>Votre appareil n'est pas compatible
+          </div>
+          <div className="row-12">
+            <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
+          </div>
         </div>
       </>;
     } else if(cameraStatus == 'enabled') {
       cameraDisplay();
       return <>
-        <img id="imageInput"></img>
-        <div className="text-center">
+      <div className="text-center">
+        <img id="imageInput"></img>        
           <h1><RecordCircle onClick={takeScreenshot}></RecordCircle></h1>
         </div>
       </>;
     } else if(cameraStatus == 'captured') {
       return <>
-        <img id="imageInput"></img>
-        <div className="text-center">
-          <h1>
-            <XCircle className="me-1 text-danger" onClick={cancelScreenshot}></XCircle>
-            <CheckCircle className="text-success" onClick={saveScreenshot}></CheckCircle>
-          </h1>
-        </div>
+        <img id="imageInput" src={originalImage}></img>
+        <form className="m-2">
+          <div className="form-group row">
+            <label htmlFor="serverCB" className="col-sm-2 col-form-label">IA: </label>
+            <div className="col-sm-10">
+            <select className="form-control form-control-sm" aria-label="Sélectionner une IA" id="serverCB">
+              <option value="1">IA Google</option>
+              <option value="2">IA Imerir</option>
+            </select>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <h1>
+              <XCircle className="me-1 text-danger" onClick={cancelScreenshot}></XCircle>
+              <CheckCircle className="text-success" onClick={saveScreenshot}></CheckCircle>
+            </h1>
+          </div>
+
+        </form>
       </>;
     }
   }
 
   const takeScreenshot = () => {
     setCameraStatus('captured');
-  }
+    
+    let image = document.getElementById('imageInput') as HTMLImageElement | null;
+    
+    if(image) {
+      const dataUrl = image.getAttribute('src');
+      if(dataUrl) setOriginalImage(dataUrl);
+    }
+    
+  };
 
   const saveScreenshot = () => {
     let image = document.getElementById('imageInput');
