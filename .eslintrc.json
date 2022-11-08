@@ -31,7 +31,7 @@
     },
     "rules": {
         "prettier/prettier": ["warn",  {"endOfLine": "lf"}],
-
+        "react/no-unescaped-entities": 0,
         "max-len": [2, 120, 4, {"ignoreUrls": true}],
         "semi": ["error", "always"]
     }

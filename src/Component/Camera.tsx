@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import Webcam from "react-webcam";
+import Webcam from 'react-webcam';
 
 import Button from '@mui/material/Button';
 
-const Camera: React.FC = React.memo(() => {
+const videoConstraints = {
+    width: 1280,
+    height: 720,
+    // facingMode: 'user',
+    facingMode: { exact: 'environment' },
+};
 
-    const [cameraStatus, setCameraStatus] =
-        useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>('pending');
+const WebcamComponent = () => <Webcam />;
+
+const Camera: React.FC = React.memo(() => {
+    const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
+        'pending'
+    );
 
     const [counter, setCounter] = useState(0);
 
@@ -28,7 +37,8 @@ const Camera: React.FC = React.memo(() => {
             },
         };
 
-        navigator.mediaDevices.getUserMedia(constraints)
+        navigator.mediaDevices
+            .getUserMedia(constraints)
             .then((stream) => {
                 /* use the stream */
                 setCameraStatus('enabled');
@@ -61,12 +71,9 @@ const Camera: React.FC = React.memo(() => {
     };
 
     const cameraStatusSection = () => {
-
         return (
             <>
-                <div>
-
-                </div>
+                <div></div>
             </>
         );
 
@@ -159,7 +166,6 @@ const Camera: React.FC = React.memo(() => {
             const dataUrl = image.getAttribute('src');
             if (dataUrl) setOriginalImage(dataUrl);
         }
-
     };
 
     const saveScreenshot = () => {
@@ -174,19 +180,30 @@ const Camera: React.FC = React.memo(() => {
     };
 
     const videoInputsection = () => {
-        return <>
-            <video hidden={true}></video>
-        </>;
+        return (
+            <>
+                <video hidden={true}></video>
+            </>
+        );
     };
 
+    const webcamRef = React.useRef<Webcam>(null);
+    const capture = React.useCallback(() => {
+        const imageSrc = webcamRef?.current?.getScreenshot();
+    }, [webcamRef]);
+
     return (
-        <>
-            <Button variant='contained' onClick={() => askForPermission()}>
-                Activer la caméra
-            </Button>
-            <Webcam />
-            {/*{videoInputsection()}*/}
-        </>
+        <div className="webcam-container">
+            <Webcam
+                audio={false}
+                height={200}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                width={220}
+                videoConstraints={videoConstraints}
+            />
+            <button onClick={capture}>Capture photo</button>
+        </div>
     );
 });
 
