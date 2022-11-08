@@ -43,7 +43,7 @@ const  DrawerAppBar : React.FC<AppbarProps> = React.memo(({window})  => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-           <img src={require('../Assets/Logo-Biodiversarium.png')} alt="Logo" />
+           <img src={require('../Assets/Logo-Biodiversarium.png')} alt="Logo" style={{height: '5rem'}}/>
 
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
