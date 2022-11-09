@@ -32,31 +32,22 @@ export interface CameraProps {
 const Camera: React.FC<CameraProps> = React.memo((Props) => {
     const { isShoot, screenShotHandler } = Props;
 
-    useEffect(() => {
-        if (isShoot) {
-            screenShotHandler(false);
-            takeScreenshot();
-            console.log('screen');
-        }
-    }, [isShoot]);
-
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
     );
 
-    const [counter, setCounter] = useState(0);
     const [iaEngine, setIaEngine] = useState<IaEngine>(IaEngine.IMERIR);
 
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [video, setVideo] = useState<HTMLVideoElement | null>(null);
+    const [image, setImage] = useState<HTMLImageElement | null>(null);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCounter((prevCounter) => prevCounter + 1);
-        }, 1);
+        if (cameraStatus !== 'enabled' && cameraStatus !== 'captured') return;
+        if (isShoot) takeScreenshot();
 
-        return () => clearInterval(interval);
-    }, []);
+        switchCamera();
+    }, [isShoot]);
 
     const askForPermission = () => {
         const constraints: MediaStreamConstraints = {
@@ -89,28 +80,48 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
         setIaEngine(sender?.target?.value ? sender.target.value : IaEngine.IMERIR);
     };
 
-    const takeScreenshot = () => {
-        setCameraStatus('captured');
-        if (video) video.pause();
+    const switchCamera = () => {
+        if (video) {
+            video.hidden = isShoot;
+            setCameraStatus(isShoot ? 'captured' : 'enabled');
+        }
 
+        if (image) {
+            image.hidden = !isShoot;
+        }
+    };
+
+    const takeScreenshot = () => {
+        if (cameraStatus === 'pending') return;
+        setCameraStatus('captured');
         const canvas = document.createElement('canvas');
 
         if (video) {
+            video.hidden = true;
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
 
             const ctx = canvas.getContext('2d');
+
+            console.log(cameraStatus);
+            console.log(ctx);
+            console.log(video);
+
             if (cameraStatus === 'enabled' && ctx && video) {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const image = canvas.toDataURL('image/jpeg');
+                const _image = canvas.toDataURL('image/jpeg');
 
+                if (image) {
+                    console.log('screen');
+                    image.src = _image;
+                }
                 console.log(iaEngine);
-                console.log(image);
+                console.log(_image);
                 // TODO: envoi serveur
                 axios
                     .post(`SERVER_URL`, {
-                        image: image,
-                        ia: iaEngine ? iaEngine : 'google',
+                        image: _image,
+                        ia: iaEngine ? iaEngine : 'Imerir',
                     })
                     .then((res) => {
                         setCameraStatus('enabled');
@@ -131,6 +142,7 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                     playsInline
                     ref={(ref) => setVideo(ref)}
                 ></video>
+                <img hidden={true} alt={'img'} width={'100%'} height={'100%'} ref={(ref) => setImage(ref)} />
             </Grid>
             <Grid xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
@@ -147,7 +159,7 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                         <Alert severity="error">Votre appareil n'est pas compatible</Alert>
                     ) : cameraStatus === 'enabled' ? (
                         <>
-                            <FormControl fullWidth>
+                            {/*                            <FormControl fullWidth>
                                 <InputLabel id="ia-engine-select-label">Ia Engine</InputLabel>
                                 <Select
                                     labelId="ia-engine-select-label"
@@ -159,15 +171,13 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                                     <MenuItem value={IaEngine.IMERIR}>{IaEngine.IMERIR}</MenuItem>
                                     <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
                                 </Select>
-                            </FormControl>
+                            </FormControl>*/}
                         </>
                     ) : (
                         <i>Traitement en cours...</i>
                     )}
                 </Grid>
             </Grid>
-
-            {/*<button onClick={capture}>Capture photo</button>*/}
         </>
     );
 });
