@@ -15,6 +15,12 @@ function App() {
         setIsTakeScreenShot(value);
     };
 
+    const [isCameraActive, setIsCameraActive] = useState(false);
+
+    const cameraActiveHandler = (value: boolean): void => {
+        setIsCameraActive(value);
+    };
+
     return (
         <>
             <Camera isShoot={isTakeScreenShot} screenShotHandler={takeScreenShotHandler} />
@@ -32,7 +38,7 @@ function App() {
                     </Grid>
                 </Grid>
             </Box>
-            <AppBarBottom screenShotHandler={takeScreenShotHandler} />
+            <AppBarBottom isShoot={isTakeScreenShot} screenShotHandler={takeScreenShotHandler} />
         </>
     );
 }
