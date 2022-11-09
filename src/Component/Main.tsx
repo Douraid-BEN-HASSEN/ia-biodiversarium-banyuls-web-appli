@@ -5,7 +5,7 @@
 import React, { useState, memo } from 'react';
 
 import Camera from './Camera';
-import { Box, Grid, Paper } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 import FishInformation from './FishInformation';
 import AppBarBottom from './AppBarBottom';
 
@@ -24,26 +24,22 @@ const Main: React.FC = () => {
 
     return (
         <>
-            <Camera
-                isShoot={isTakeScreenShot}
-                screenShotHandler={takeScreenShotHandler}
-                isCameraActive={isCameraActive}
-                cameraActiveHandler={cameraActiveHandler}
-            />
+            <Paper>
+                <Camera
+                    isShoot={isTakeScreenShot}
+                    screenShotHandler={takeScreenShotHandler}
+                    isCameraActive={isCameraActive}
+                    cameraActiveHandler={cameraActiveHandler}
+                />
+            </Paper>
 
-            <Box>
-                <Grid sx={{ p: 5 }} container justifyContent="center" spacing={2}>
-                    <Grid item xs={12} justifyContent="center">
-                        <Paper>
-                            <Box p={5}></Box>
-                        </Paper>
-                    </Grid>
-
+            <Paper>
+                <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12} justifyContent="center">
                         <FishInformation />
                     </Grid>
                 </Grid>
-            </Box>
+            </Paper>
             <AppBarBottom
                 isShoot={isTakeScreenShot}
                 screenShotHandler={takeScreenShotHandler}

@@ -48,7 +48,7 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
                 {!isCameraActive ? (
-                    <StyledExtendedFab variant="extended" onClick={() => cameraActiveHandler(true)}>
+                    <StyledExtendedFab variant="extended" color="error" onClick={() => cameraActiveHandler(true)}>
                         {t('appbar.camera.active')}
                     </StyledExtendedFab>
                 ) : (

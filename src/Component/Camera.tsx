@@ -6,7 +6,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 
-import { Alert, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
+import { Alert, Box, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export enum IaEngine {
@@ -15,18 +15,6 @@ export enum IaEngine {
 }
 
 const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
-
-const videoConstraints = {
-    width: 1280,
-    height: 720,
-    // facingMode: 'user',
-    facingMode: { exact: 'environment' },
-};
-
-interface ScreenshotDimensions {
-    width: number;
-    height: number;
-}
 
 export interface CameraProps {
     isShoot: boolean;
@@ -160,9 +148,9 @@ const Camera: React.FC<CameraProps> = (Props) => {
             <Grid xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
                     {cameraStatus === 'pending' ? (
-                        <Stack spacing={2} pt={5}>
+                        <Box pt={10} pb={10}>
                             <Alert severity="info"> {t('camera.pending')} </Alert>
-                        </Stack>
+                        </Box>
                     ) : cameraStatus === 'refused' ? (
                         <Alert severity="warning"> {t('camera.disable')} </Alert>
                     ) : cameraStatus === 'errored' ? (
