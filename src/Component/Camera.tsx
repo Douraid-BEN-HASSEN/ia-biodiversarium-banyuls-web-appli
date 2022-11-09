@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Webcam from 'react-webcam';
 import axios from 'axios';
 
-import { isEqual, map } from 'lodash';
-
-import { Alert, Button, FormControl, IconButton, InputLabel, MenuItem } from '@mui/material';
+import { Alert, Button, Fab, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Settings, Cancel, Album } from '@mui/icons-material';
 
 export enum IaEngine {
     'IMERIR' = 'Imerir',
@@ -27,7 +23,22 @@ interface ScreenshotDimensions {
     height: number;
 }
 
-const Camera: React.FC = React.memo(() => {
+export interface CameraProps {
+    isShoot: boolean;
+
+    screenShotHandler(value: boolean): void;
+}
+
+const Camera: React.FC<CameraProps> = React.memo((Props) => {
+    const { isShoot, screenShotHandler } = Props;
+
+    useEffect(() => {
+        if (isShoot) {
+            screenShotHandler(false);
+            console.log('screen');
+        }
+    }, [isShoot]);
+
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
     );
@@ -53,6 +64,8 @@ const Camera: React.FC = React.memo(() => {
                 facingMode: 'environment',
             },
         };
+
+        scroll(0, 0);
 
         navigator.mediaDevices
             .getUserMedia(constraints)
@@ -106,7 +119,7 @@ const Camera: React.FC = React.memo(() => {
 
     return (
         <>
-            <div id="cameraStatusSection">
+            <Grid>
                 <video
                     muted={true}
                     hidden={true}
@@ -116,44 +129,47 @@ const Camera: React.FC = React.memo(() => {
                     playsInline
                     ref={(ref) => setVideo(ref)}
                 ></video>
+            </Grid>
+            <Grid xs={12} container justifyContent="center">
+                <Grid item xs={8} justifyContent="center">
+                    {cameraStatus === 'pending' ? (
+                        <Stack spacing={2} pt={5}>
+                            <Alert severity="info">Veuillez activer la caméra</Alert>
+                            <Button variant="contained" onClick={askForPermission}>
+                                Activer la caméra
+                            </Button>
+                        </Stack>
+                    ) : cameraStatus === 'refused' ? (
+                        <Alert severity="warning"> La caméra est désactivée ! Veuillez autoriser la caméra</Alert>
+                    ) : cameraStatus === 'errored' ? (
+                        <Alert severity="error">Votre appareil n'est pas compatible</Alert>
+                    ) : cameraStatus === 'enabled' ? (
+                        <>
+                            <FormControl fullWidth>
+                                <InputLabel id="ia-engine-select-label">Ia Engine</InputLabel>
+                                <Select
+                                    labelId="ia-engine-select-label"
+                                    id="ia-engine-select"
+                                    value={iaEngine}
+                                    label="iaEngine"
+                                    onChange={onIaEngineChange}
+                                >
+                                    <MenuItem value={IaEngine.IMERIR}>{IaEngine.IMERIR}</MenuItem>
+                                    <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                {cameraStatus === 'pending' ? (
-                    <>
-                        <Alert severity="info">Veuillez activer la caméra</Alert>
-                        <Button variant="contained" onClick={askForPermission}>
-                            Activer la caméra
-                        </Button>
-                    </>
-                ) : cameraStatus === 'refused' ? (
-                    <Alert severity="warning"> La caméra est désactivée ! Veuillez autoriser la caméra</Alert>
-                ) : cameraStatus === 'errored' ? (
-                    <Alert severity="error">Votre appareil n'est pas compatible</Alert>
-                ) : cameraStatus === 'enabled' ? (
-                    <>
-                        <FormControl fullWidth>
-                            <InputLabel id="ia-engine-select-label">Ia Engine</InputLabel>
-                            <Select
-                                labelId="ia-engine-select-label"
-                                id="ia-engine-select"
-                                value={iaEngine}
-                                label="iaEngine"
-                                onChange={onIaEngineChange}
-                            >
-                                <MenuItem value={IaEngine.IMERIR}>{IaEngine.IMERIR}</MenuItem>
-                                <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
-                            </Select>
-                        </FormControl>
+                            {/*<Fab color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>*/}
+                            {/*    <PhotoCamera />*/}
+                            {/*</Fab>*/}
+                        </>
+                    ) : (
+                        <i>Traitement en cours...</i>
+                    )}
+                </Grid>
+            </Grid>
 
-                        <IconButton color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>
-                            <Album />
-                        </IconButton>
-                        <Alert severity="success">ok</Alert>
-                    </>
-                ) : (
-                    <i>Traitement en cours...</i>
-                )}
-                {/*<button onClick={capture}>Capture photo</button>*/}
-            </div>
+            {/*<button onClick={capture}>Capture photo</button>*/}
         </>
     );
 });

@@ -1,25 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 import Camera from './Component/Camera';
 // import Camera from './Component/camera.component';
-import { Box, Grid } from '@mui/material';
-import DrawerAppBar from './Component/AppBar';
+import { Grid, Paper, Box } from '@mui/material';
 import FishInformation from './Component/FishInformation';
 
+import AppBarBottom from './Component/AppBarBottom';
+
 function App() {
+    const [isTakeScreenShot, setIsTakeScreenShot] = useState(false);
+
+    const takeScreenShotHandler = (value: boolean): void => {
+        setIsTakeScreenShot(value);
+    };
+
     return (
         <>
-            <DrawerAppBar />
-            <Grid sx={{ p: 5 }} container justifyContent="center">
-                <Grid item>
-                    <Camera />
-                </Grid>
+            <Camera isShoot={isTakeScreenShot} screenShotHandler={takeScreenShotHandler} />
+            {/*<DrawerAppBar />*/}
+            <Box>
+                <Grid sx={{ p: 5 }} container justifyContent="center" spacing={2}>
+                    <Grid item xs={12} justifyContent="center">
+                        <Paper>
+                            <Box p={5}></Box>
+                        </Paper>
+                    </Grid>
 
-                <Grid item>
-                    <FishInformation />
+                    <Grid item xs={12} justifyContent="center">
+                        <FishInformation />
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
+            <AppBarBottom screenShotHandler={takeScreenShotHandler} />
         </>
     );
 }
