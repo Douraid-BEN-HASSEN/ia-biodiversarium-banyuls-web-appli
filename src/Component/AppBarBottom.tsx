@@ -18,23 +18,34 @@ const StyledFab = styled(Fab)({
     margin: '0 auto',
 });
 
+const StyledExtendedFab = styled(Fab)({
+    position: 'absolute',
+    zIndex: 1,
+    top: -30,
+    left: '20%',
+    right: '20%',
+    margin: '0 auto',
+});
+
 interface AppBarBottomProps {
     isShoot: boolean;
-    isCameraActive: boolean;
-
     screenShotHandler(value: boolean): void;
+    isCameraActive: boolean;
+    cameraActiveHandler(value: boolean): void;
 }
 
 const AppBarBottom: React.FC<AppBarBottomProps> = React.memo((Props) => {
-    const { isShoot, isCameraActive, screenShotHandler } = Props;
+    const { isShoot, isCameraActive, cameraActiveHandler, screenShotHandler } = Props;
 
     return (
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
                 {!isCameraActive ? (
-                    <StyledFab variant="extended">Test___test</StyledFab>
+                    <StyledExtendedFab variant="extended" onClick={() => cameraActiveHandler(true)}>
+                        Veuillez activer la caméra
+                    </StyledExtendedFab>
                 ) : (
-                    <StyledFab color="success" aria-label="add">
+                    <StyledFab color="success" aria-label="takeScreen">
                         {isShoot ? (
                             <PlayArrowIcon onClick={() => screenShotHandler(!isShoot)} />
                         ) : (

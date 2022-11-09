@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 
 import Camera from './Component/Camera';
-// import Camera from './Component/camera.component';
+
 import { Grid, Paper, Box } from '@mui/material';
 import FishInformation from './Component/FishInformation';
 
@@ -23,7 +23,12 @@ function App() {
 
     return (
         <>
-            <Camera isShoot={isTakeScreenShot} screenShotHandler={takeScreenShotHandler} />
+            <Camera
+                isShoot={isTakeScreenShot}
+                screenShotHandler={takeScreenShotHandler}
+                isCameraActive={isCameraActive}
+                cameraActiveHandler={cameraActiveHandler}
+            />
             {/*<DrawerAppBar />*/}
             <Box>
                 <Grid sx={{ p: 5 }} container justifyContent="center" spacing={2}>
@@ -38,7 +43,12 @@ function App() {
                     </Grid>
                 </Grid>
             </Box>
-            <AppBarBottom isShoot={isTakeScreenShot} screenShotHandler={takeScreenShotHandler} />
+            <AppBarBottom
+                isShoot={isTakeScreenShot}
+                screenShotHandler={takeScreenShotHandler}
+                isCameraActive={isCameraActive}
+                cameraActiveHandler={cameraActiveHandler}
+            />
         </>
     );
 }

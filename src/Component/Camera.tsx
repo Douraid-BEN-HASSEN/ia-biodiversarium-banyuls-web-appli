@@ -25,12 +25,13 @@ interface ScreenshotDimensions {
 
 export interface CameraProps {
     isShoot: boolean;
-
     screenShotHandler(value: boolean): void;
+    isCameraActive: boolean;
+    cameraActiveHandler(value: boolean): void;
 }
 
 const Camera: React.FC<CameraProps> = React.memo((Props) => {
-    const { isShoot, screenShotHandler } = Props;
+    const { isShoot, screenShotHandler, isCameraActive, cameraActiveHandler } = Props;
 
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
@@ -48,6 +49,10 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
 
         switchCamera();
     }, [isShoot]);
+
+    useEffect(() => {
+        if (isCameraActive) askForPermission();
+    }, [isCameraActive]);
 
     const askForPermission = () => {
         const constraints: MediaStreamConstraints = {
@@ -73,6 +78,7 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
             .catch((err) => {
                 /* handle the error */
                 setCameraStatus(err.toString().includes('Permission denied') ? 'refused' : 'errored');
+                cameraActiveHandler(false);
             });
     };
 
