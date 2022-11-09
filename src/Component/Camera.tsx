@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
+import axios from 'axios';
 
-import Button from '@mui/material/Button';
+import { isEqual, map } from 'lodash';
+
+import { Alert, Button, FormControl, IconButton, InputLabel, MenuItem } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Settings, Cancel, Album } from '@mui/icons-material';
+
+export enum IaEngine {
+    'IMERIR' = 'Imerir',
+    'GOOGLE' = 'google',
+}
+
+const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
 
 const videoConstraints = {
     width: 1280,
@@ -10,7 +22,10 @@ const videoConstraints = {
     facingMode: { exact: 'environment' },
 };
 
-const WebcamComponent = () => <Webcam />;
+interface ScreenshotDimensions {
+    width: number;
+    height: number;
+}
 
 const Camera: React.FC = React.memo(() => {
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
@@ -18,8 +33,10 @@ const Camera: React.FC = React.memo(() => {
     );
 
     const [counter, setCounter] = useState(0);
+    const [iaEngine, setIaEngine] = useState<IaEngine>(IaEngine.IMERIR);
 
-    const [originalImage, setOriginalImage] = useState<string>('');
+    const [stream, setStream] = useState<MediaStream | null>(null);
+    const [video, setVideo] = useState<HTMLVideoElement | null>(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -40,12 +57,12 @@ const Camera: React.FC = React.memo(() => {
         navigator.mediaDevices
             .getUserMedia(constraints)
             .then((stream) => {
+                setStream(stream);
                 /* use the stream */
                 setCameraStatus('enabled');
-                const video = document.querySelector('video');
                 if (video) {
                     video.srcObject = stream;
-                    video.play();
+                    video.oncanplay = () => (video.hidden = false);
                 }
             })
             .catch((err) => {
@@ -54,156 +71,90 @@ const Camera: React.FC = React.memo(() => {
             });
     };
 
-    const cameraDisplay = () => {
-        const canvas = document.createElement('canvas');
-        const video = document.querySelector('video');
-
-        canvas.width = window.screen.width;
-        canvas.height = window.screen.height;
-
-        const ctx = canvas.getContext('2d');
-        if (cameraStatus == 'enabled' && ctx && video) {
-            console.log('ICI');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const image = canvas.toDataURL('image/jpeg');
-            document.getElementById('imageInput')?.setAttribute('src', image);
-        }
-    };
-
-    const cameraStatusSection = () => {
-        return (
-            <>
-                <div></div>
-            </>
-        );
-
-        // if (cameraStatus == 'pending') {
-        //     return <>
-        //         <div id="cameraStatusSection" className="text-center m-3">
-        //             <Col>
-        //                 <Row>
-        //                     <div className="ms-1 text-primary">
-        //                         <div className="row-12 mb-2">
-        //                             <Gear className="me-2"/>Veuillez activer la caméra
-        //                         </div>
-        //                         <div className="row-12">
-        //                             <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
-        //                         </div>
-        //
-        //                     </div>
-        //                 </Row>
-        //                 <Row>
-        //                     <div className="col text-center">
-        //                         <Button className="mt-2" onClick={askForPermission}>Activer la caméra</Button>
-        //                     </div>
-        //                 </Row>
-        //             </Col>
-        //         </div>
-        //     </>;
-        // } else if (cameraStatus == 'refused') {
-        //     return <>
-        //         <div id="cameraStatusSection" className="text-center m-3">
-        //             <div className="row-12 mb-2">
-        //                 <XCircle className="me-1"/>La caméra est désactivée ! Veuillez autoriser la caméra
-        //             </div>
-        //             <div className="row-12">
-        //                 <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
-        //             </div>
-        //         </div>
-        //     </>;
-        // } else if (cameraStatus == 'errored') {
-        //     return <>
-        //         <div id="cameraStatusSection" className="text-center m-3">
-        //             <div className="row-12 mb-2">
-        //                 <XCircle className="me-1"/>Votre appareil n'est pas compatible
-        //             </div>
-        //             <div className="row-12">
-        //                 <img src={require('../Assets/enable_camera.jpg')} style={{width: '20rem'}}></img>
-        //             </div>
-        //         </div>
-        //     </>;
-        // } else if (cameraStatus == 'enabled') {
-        //     cameraDisplay();
-        //     return <>
-        //         <div className="text-center">
-        //             <img id="imageInput"></img>
-        //             <h1><RecordCircle onClick={takeScreenshot}></RecordCircle></h1>
-        //         </div>
-        //     </>;
-        // } else if (cameraStatus == 'captured') {
-        //     return <>
-        //         <img id="imageInput" src={originalImage}></img>
-        //         <form className="m-2">
-        //             <div className="form-group row">
-        //                 <label htmlFor="serverCB" className="col-sm-2 col-form-label">IA: </label>
-        //                 <div className="col-sm-10">
-        //                     <select className="form-control form-control-sm" aria-label="Sélectionner une IA"
-        //                             id="serverCB">
-        //                         <option value="1">IA Google</option>
-        //                         <option value="2">IA Imerir</option>
-        //                     </select>
-        //                 </div>
-        //             </div>
-        //
-        //             <div className="text-center">
-        //                 <h1>
-        //                     <XCircle className="me-1 text-danger" onClick={cancelScreenshot}></XCircle>
-        //                     <CheckCircle className="text-success" onClick={saveScreenshot}></CheckCircle>
-        //                 </h1>
-        //             </div>
-        //
-        //         </form>
-        //     </>;
-        // }
+    const onIaEngineChange = (sender: any) => {
+        setIaEngine(sender?.target?.value ? sender.target.value : IaEngine.IMERIR);
     };
 
     const takeScreenshot = () => {
         setCameraStatus('captured');
 
-        const image = document.getElementById('imageInput') as HTMLImageElement | null;
+        const canvas = document.createElement('canvas');
 
-        if (image) {
-            const dataUrl = image.getAttribute('src');
-            if (dataUrl) setOriginalImage(dataUrl);
+        if (video) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext('2d');
+            if (cameraStatus === 'enabled' && ctx && video) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const image = canvas.toDataURL('image/jpeg');
+
+                console.log(iaEngine);
+                console.log(image);
+                // TODO: envoi serveur
+                axios
+                    .post(`SERVER_URL`, {
+                        image: image,
+                        ia: iaEngine ? iaEngine : 'google',
+                    })
+                    .then((res) => {
+                        setCameraStatus('enabled');
+                    });
+            }
         }
     };
-
-    const saveScreenshot = () => {
-        const image = document.getElementById('imageInput');
-        if (image) {
-            console.log(image);
-        }
-    };
-
-    const cancelScreenshot = () => {
-        setCameraStatus('enabled');
-    };
-
-    const videoInputsection = () => {
-        return (
-            <>
-                <video hidden={true}></video>
-            </>
-        );
-    };
-
-    const webcamRef = React.useRef<Webcam>(null);
-    const capture = React.useCallback(() => {
-        const imageSrc = webcamRef?.current?.getScreenshot();
-    }, [webcamRef]);
 
     return (
-        <div className="webcam-container">
-            <Webcam
-                audio={false}
-                height={200}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                width={220}
-                videoConstraints={videoConstraints}
-            />
-            <button onClick={capture}>Capture photo</button>
-        </div>
+        <>
+            <div id="cameraStatusSection">
+                <video
+                    muted={true}
+                    hidden={true}
+                    width={'100%'}
+                    height={'100%'}
+                    autoPlay
+                    playsInline
+                    ref={(ref) => setVideo(ref)}
+                ></video>
+
+                {cameraStatus === 'pending' ? (
+                    <>
+                        <Alert severity="info">Veuillez activer la caméra</Alert>
+                        <Button variant="contained" onClick={askForPermission}>
+                            Activer la caméra
+                        </Button>
+                    </>
+                ) : cameraStatus === 'refused' ? (
+                    <Alert severity="warning"> La caméra est désactivée ! Veuillez autoriser la caméra</Alert>
+                ) : cameraStatus === 'errored' ? (
+                    <Alert severity="error">Votre appareil n'est pas compatible</Alert>
+                ) : cameraStatus === 'enabled' ? (
+                    <>
+                        <FormControl fullWidth>
+                            <InputLabel id="ia-engine-select-label">Ia Engine</InputLabel>
+                            <Select
+                                labelId="ia-engine-select-label"
+                                id="ia-engine-select"
+                                value={iaEngine}
+                                label="iaEngine"
+                                onChange={onIaEngineChange}
+                            >
+                                <MenuItem value={IaEngine.IMERIR}>{IaEngine.IMERIR}</MenuItem>
+                                <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <IconButton color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>
+                            <Album />
+                        </IconButton>
+                        <Alert severity="success">ok</Alert>
+                    </>
+                ) : (
+                    <i>Traitement en cours...</i>
+                )}
+                {/*<button onClick={capture}>Capture photo</button>*/}
+            </div>
+        </>
     );
 });
 
