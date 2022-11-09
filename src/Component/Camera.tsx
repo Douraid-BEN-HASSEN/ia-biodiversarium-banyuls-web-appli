@@ -77,7 +77,8 @@ const Camera: React.FC = React.memo(() => {
 
     const takeScreenshot = () => {
         setCameraStatus('captured');
-
+        if(video) video.pause();
+        
         const canvas = document.createElement('canvas');
 
         if (video) {
@@ -147,7 +148,6 @@ const Camera: React.FC = React.memo(() => {
                         <IconButton color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>
                             <Album />
                         </IconButton>
-                        <Alert severity="success">ok</Alert>
                     </>
                 ) : (
                     <i>Traitement en cours...</i>
