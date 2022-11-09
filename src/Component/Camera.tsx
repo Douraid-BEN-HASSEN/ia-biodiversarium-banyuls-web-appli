@@ -35,6 +35,7 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
     useEffect(() => {
         if (isShoot) {
             screenShotHandler(false);
+            takeScreenshot();
             console.log('screen');
         }
     }, [isShoot]);
@@ -90,6 +91,7 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
 
     const takeScreenshot = () => {
         setCameraStatus('captured');
+        if (video) video.pause();
 
         const canvas = document.createElement('canvas');
 
@@ -158,10 +160,6 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                                     <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
                                 </Select>
                             </FormControl>
-
-                            {/*<Fab color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>*/}
-                            {/*    <PhotoCamera />*/}
-                            {/*</Fab>*/}
                         </>
                     ) : (
                         <i>Traitement en cours...</i>
