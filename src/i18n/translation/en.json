@@ -1,0 +1,13 @@
+{
+    "appbar": {
+        "camera": {
+            "active" : "Activate the camera"
+        }
+    },
+    "camera": {
+        "pending": "Please activate the camera",
+        "disable": "The camera is off! Please allow camera",
+        "errored": "Your device is not compatible",
+        "captured": "Ongoing treatment..."
+    }
+}

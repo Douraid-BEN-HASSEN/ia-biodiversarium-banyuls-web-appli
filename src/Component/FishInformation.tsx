@@ -1,8 +1,12 @@
-import React from 'react';
+/**
+ * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
+ */
+
+import React, { memo } from 'react';
 
 import { Box, Paper, Typography } from '@mui/material';
 
-const FishInformation: React.FC = React.memo(() => {
+const FishInformation: React.FC = () => {
     return (
         <Paper>
             <Box p={5}>
@@ -27,7 +31,6 @@ const FishInformation: React.FC = React.memo(() => {
             </Box>
         </Paper>
     );
-});
+};
 
-FishInformation.displayName = 'FishInformation';
-export default FishInformation;
+export default memo(FishInformation);

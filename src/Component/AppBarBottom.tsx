@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * @author Alexis DEVLEESCHAUWER <alexis@devleeschauwer.fr>
+ */
+
+import React, { memo } from 'react';
 
 import { Toolbar, Box, AppBar, Fab, IconButton } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -34,15 +39,17 @@ interface AppBarBottomProps {
     cameraActiveHandler(value: boolean): void;
 }
 
-const AppBarBottom: React.FC<AppBarBottomProps> = React.memo((Props) => {
+const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     const { isShoot, isCameraActive, cameraActiveHandler, screenShotHandler } = Props;
+
+    const { t } = useTranslation();
 
     return (
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
                 {!isCameraActive ? (
                     <StyledExtendedFab variant="extended" onClick={() => cameraActiveHandler(true)}>
-                        Veuillez activer la caméra
+                        {t('appbar.camera.active')}
                     </StyledExtendedFab>
                 ) : (
                     <StyledFab color="success" aria-label="takeScreen">
@@ -64,7 +71,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = React.memo((Props) => {
             </Toolbar>
         </AppBar>
     );
-});
+};
 
-AppBarBottom.displayName = 'AppBarBottom';
-export default AppBarBottom;
+export default memo(AppBarBottom);

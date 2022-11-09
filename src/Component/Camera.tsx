@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
+ * @author Alexis DEVLEESCHAUWER <alexis@devleeschauwer.fr>
+ */
+
+import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 
-import { Alert, Button, Fab, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Alert, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export enum IaEngine {
     'IMERIR' = 'Imerir',
@@ -30,8 +35,10 @@ export interface CameraProps {
     cameraActiveHandler(value: boolean): void;
 }
 
-const Camera: React.FC<CameraProps> = React.memo((Props) => {
+const Camera: React.FC<CameraProps> = (Props) => {
     const { isShoot, screenShotHandler, isCameraActive, cameraActiveHandler } = Props;
+
+    const { t } = useTranslation();
 
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
@@ -147,22 +154,19 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                     autoPlay
                     playsInline
                     ref={(ref) => setVideo(ref)}
-                ></video>
+                />
                 <img hidden={true} alt={'img'} width={'100%'} height={'100%'} ref={(ref) => setImage(ref)} />
             </Grid>
             <Grid xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
                     {cameraStatus === 'pending' ? (
                         <Stack spacing={2} pt={5}>
-                            <Alert severity="info">Veuillez activer la caméra</Alert>
-                            <Button variant="contained" onClick={askForPermission}>
-                                Activer la caméra
-                            </Button>
+                            <Alert severity="info"> {t('camera.pending')} </Alert>
                         </Stack>
                     ) : cameraStatus === 'refused' ? (
-                        <Alert severity="warning"> La caméra est désactivée ! Veuillez autoriser la caméra</Alert>
+                        <Alert severity="warning"> {t('camera.disable')} </Alert>
                     ) : cameraStatus === 'errored' ? (
-                        <Alert severity="error">Votre appareil n'est pas compatible</Alert>
+                        <Alert severity="error"> {t('camera.errored')} </Alert>
                     ) : cameraStatus === 'enabled' ? (
                         <>
                             {/*                            <FormControl fullWidth>
@@ -179,14 +183,15 @@ const Camera: React.FC<CameraProps> = React.memo((Props) => {
                                 </Select>
                             </FormControl>*/}
                         </>
+                    ) : cameraStatus === 'captured' ? (
+                        <Alert severity="success"> {t('camera.captured')} </Alert>
                     ) : (
-                        <i>Traitement en cours...</i>
+                        <Alert severity="error"> ERROR </Alert>
                     )}
                 </Grid>
             </Grid>
         </>
     );
-});
+};
 
-Camera.displayName = 'Camera';
-export default Camera;
+export default memo(Camera);

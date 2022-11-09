@@ -1,0 +1,13 @@
+{
+    "appbar": {
+        "camera": {
+            "active" : "Activa la càmera"
+        }
+    },
+    "camera": {
+        "pending": "Si us plau, activeu la càmera",
+        "disable": "La càmera està apagada! Permet la càmera",
+        "errored": "El vostre dispositiu no és compatible",
+        "captured": "Tractament en curs..."
+    }
+}
