@@ -13,9 +13,14 @@
     "menu": {
         "language" : "Langue",
         "server_options": "Choix du server (dev)",
-        "about": "A propos de nous",
+        "about": "À propos de nous",
         "languages": {
             "choice": "Choisissez votre langue"
+        }
+    },
+    "about": {
+        "text": {
+            "main": "IMERIR bgaxe"
         }
     }
 }
