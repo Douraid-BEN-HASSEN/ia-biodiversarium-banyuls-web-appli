@@ -9,6 +9,8 @@ import axios from 'axios';
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
+const SERVER_URL = 'http://10.3.1.37:5000';
+
 export interface CameraProps {
     isShoot: boolean;
     screenShotHandler(value: boolean): void;
@@ -105,8 +107,9 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 }
                 console.log(_image);
                 // TODO: envoi serveur
+
                 axios
-                    .post(`SERVER_URL`, {
+                    .post(`${SERVER_URL}/mobile/analyze`, {
                         content: _image,
                     })
                     .then(() => {
