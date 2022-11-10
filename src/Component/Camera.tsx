@@ -6,7 +6,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 
-import { Alert, Box, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack } from '@mui/material';
+import { Alert, Box, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export enum IaEngine {
@@ -132,7 +132,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
     };
 
     return (
-        <>
+        <Box>
             <Grid>
                 <video
                     muted={true}
@@ -145,16 +145,20 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 />
                 <img hidden={true} alt={'img'} width={'100%'} height={'100%'} ref={(ref) => setImage(ref)} />
             </Grid>
-            <Grid xs={12} container justifyContent="center">
+            <Grid item xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
                     {cameraStatus === 'pending' ? (
                         <Box pt={10} pb={10}>
                             <Alert severity="info"> {t('camera.pending')} </Alert>
                         </Box>
                     ) : cameraStatus === 'refused' ? (
-                        <Alert severity="warning"> {t('camera.disable')} </Alert>
+                        <Box pt={10} pb={10}>
+                            <Alert severity="warning"> {t('camera.disable')} </Alert>
+                        </Box>
                     ) : cameraStatus === 'errored' ? (
-                        <Alert severity="error"> {t('camera.errored')} </Alert>
+                        <Box pt={10} pb={10}>
+                            <Alert severity="error"> {t('camera.errored')} </Alert>
+                        </Box>
                     ) : cameraStatus === 'enabled' ? (
                         <>
                             {/*                            <FormControl fullWidth>
@@ -172,13 +176,18 @@ const Camera: React.FC<CameraProps> = (Props) => {
                             </FormControl>*/}
                         </>
                     ) : cameraStatus === 'captured' ? (
-                        <Alert severity="success"> {t('camera.captured')} </Alert>
+                        <Box pt={2} pb={5}>
+                            <LinearProgress />
+                            <Alert severity="success"> {t('camera.captured')} </Alert>
+                        </Box>
                     ) : (
-                        <Alert severity="error"> ERROR </Alert>
+                        <Box pt={5} pb={5}>
+                            <Alert severity="error"> ERROR </Alert>
+                        </Box>
                     )}
                 </Grid>
             </Grid>
-        </>
+        </Box>
     );
 };
 

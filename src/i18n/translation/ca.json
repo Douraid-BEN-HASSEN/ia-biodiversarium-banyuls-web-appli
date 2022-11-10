@@ -9,5 +9,13 @@
         "disable": "La càmera està apagada! Permet la càmera",
         "errored": "El vostre dispositiu no és compatible",
         "captured": "Tractament en curs..."
+    },
+    "menu": {
+        "about": "Sobre nosaltres",
+        "server_options": "elecció del servidor (dev)",
+        "language" : "Lenguatge",
+        "languages": {
+            "choice": "Trieu el vostre idioma"
+        }
     }
 }

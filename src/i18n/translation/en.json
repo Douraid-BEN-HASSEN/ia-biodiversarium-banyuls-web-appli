@@ -9,5 +9,13 @@
         "disable": "The camera is off! Please allow camera",
         "errored": "Your device is not compatible",
         "captured": "Ongoing treatment..."
+    },
+    "menu": {
+        "about": "About",
+        "server_options": "Server Choice (dev)",
+        "language" : "Language",
+        "languages": {
+            "choice": "Choose your language"
+        }
     }
 }

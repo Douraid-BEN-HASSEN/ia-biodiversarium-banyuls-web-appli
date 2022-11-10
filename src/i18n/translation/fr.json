@@ -9,5 +9,13 @@
         "disable": "La caméra est désactivée ! Veuillez autoriser la caméra",
         "errored": "Votre appareil n'est pas compatible",
         "captured": "Traitement en cours..."
+    },
+    "menu": {
+        "language" : "Langue",
+        "server_options": "Choix du server (dev)",
+        "about": "A propos de nous",
+        "languages": {
+            "choice": "Choisissez votre langue"
+        }
     }
 }

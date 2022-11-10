@@ -4,8 +4,14 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Fab, IconButton } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, Typography, DialogTitle, ListItemAvatar, Avatar } from '@mui/material';
+import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
+import { Fab, IconButton } from '@mui/material';
+
+import { CodeToFlag } from './Country';
+
 import { useTranslation } from 'react-i18next';
+import { Language, Languages, CodeToLanguage } from '../i18n/Language';
 
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -32,17 +38,81 @@ const StyledExtendedFab = styled(Fab)({
     margin: '0 auto',
 });
 
-interface AppBarBottomProps {
+export interface LanguageDialogProps {
+    open: boolean;
+    selectedValue: Language;
+    onClose: (value: Language) => void;
+}
+
+const LanguageDialog: React.FC<LanguageDialogProps> = (props) => {
+    const { onClose, selectedValue, open } = props;
+
+    const { t } = useTranslation();
+
+    const handleClose = () => {
+        onClose(selectedValue);
+    };
+
+    const handleListItemClick = (value: Language) => {
+        onClose(value);
+    };
+
+    return (
+        <Dialog onClose={handleClose} open={open}>
+            <DialogTitle>{t('menu.languages.choice')}</DialogTitle>
+            <List sx={{ pt: 0 }}>
+                {Languages.map((language) => (
+                    <ListItem onClick={() => handleListItemClick(language)} key={language}>
+                        <Box mr={2}>
+                            <CodeToFlag code={language} />
+                        </Box>
+                        <ListItemText primary={CodeToLanguage[language]} />
+                    </ListItem>
+                ))}
+            </List>
+        </Dialog>
+    );
+};
+
+export interface AppBarBottomProps {
     isShoot: boolean;
+
     screenShotHandler(value: boolean): void;
+
     isCameraActive: boolean;
+
     cameraActiveHandler(value: boolean): void;
 }
 
 const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     const { isShoot, isCameraActive, cameraActiveHandler, screenShotHandler } = Props;
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+
+    /** hooks menu */
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    /** hooks language dialoge */
+    const [dialogLanguageOpen, setDialogLanguageOpen] = React.useState(false);
+    const [selectedLanguage, setSelectedLanguage] = React.useState(Languages[0]);
+
+    const handleClickDialogLanguageOpen = () => {
+        setDialogLanguageOpen(true);
+    };
+
+    const handleDialogLanguageClose = (value: Language) => {
+        console.log(value);
+        setDialogLanguageOpen(false);
+        setSelectedLanguage(value);
+        i18n.changeLanguage(value).then();
+    };
 
     return (
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
@@ -65,9 +135,41 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                 <IconButton color="inherit">
                     <SearchIcon />
                 </IconButton>
-                <IconButton color="inherit">
+                <IconButton
+                    color="inherit"
+                    id="basic-button"
+                    aria-controls={open ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                >
                     <MoreIcon />
                 </IconButton>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                >
+                    <MenuItem onClick={handleClose}>{t('menu.server_options')}</MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            //
+                            handleClickDialogLanguageOpen();
+                        }}
+                    >
+                        {t('menu.language')}
+                    </MenuItem>
+                    <LanguageDialog
+                        selectedValue={selectedLanguage}
+                        open={dialogLanguageOpen}
+                        onClose={handleDialogLanguageClose}
+                    />
+                    <MenuItem onClick={handleClose}>{t('menu.about')}</MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );
