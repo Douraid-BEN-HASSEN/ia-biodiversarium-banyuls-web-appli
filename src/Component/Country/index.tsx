@@ -1,7 +1,7 @@
 /**
  * @author Alexis DEVLEESCHAUWER <alexis@devleeschauwer.fr>
  */
-import React, { memo } from 'react';
+import React from 'react';
 import FR_Flag from './3x2/FR.svg';
 import CA_Flag from './3x2/CA.svg';
 import EN_Flag from './3x2/EN.svg';

@@ -6,15 +6,8 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 
-import { Alert, Box, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Stack } from '@mui/material';
+import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-
-export enum IaEngine {
-    'IMERIR' = 'Imerir',
-    'GOOGLE' = 'google',
-}
-
-const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
 
 export interface CameraProps {
     isShoot: boolean;
@@ -31,8 +24,6 @@ const Camera: React.FC<CameraProps> = (Props) => {
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
     );
-
-    const [iaEngine, setIaEngine] = useState<IaEngine>(IaEngine.IMERIR);
 
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [video, setVideo] = useState<HTMLVideoElement | null>(null);
@@ -77,10 +68,6 @@ const Camera: React.FC<CameraProps> = (Props) => {
             });
     };
 
-    const onIaEngineChange = (sender: any) => {
-        setIaEngine(sender?.target?.value ? sender.target.value : IaEngine.IMERIR);
-    };
-
     const switchCamera = () => {
         if (video) {
             video.hidden = isShoot;
@@ -116,15 +103,13 @@ const Camera: React.FC<CameraProps> = (Props) => {
                     console.log('screen');
                     image.src = _image;
                 }
-                console.log(iaEngine);
                 console.log(_image);
                 // TODO: envoi serveur
                 axios
                     .post(`SERVER_URL`, {
-                        image: _image,
-                        ia: iaEngine ? iaEngine : 'Imerir',
+                        content: _image,
                     })
-                    .then((res) => {
+                    .then(() => {
                         setCameraStatus('enabled');
                     });
             }
@@ -160,21 +145,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
                             <Alert severity="error"> {t('camera.errored')} </Alert>
                         </Box>
                     ) : cameraStatus === 'enabled' ? (
-                        <>
-                            {/*                            <FormControl fullWidth>
-                                <InputLabel id="ia-engine-select-label">Ia Engine</InputLabel>
-                                <Select
-                                    labelId="ia-engine-select-label"
-                                    id="ia-engine-select"
-                                    value={iaEngine}
-                                    label="iaEngine"
-                                    onChange={onIaEngineChange}
-                                >
-                                    <MenuItem value={IaEngine.IMERIR}>{IaEngine.IMERIR}</MenuItem>
-                                    <MenuItem value={IaEngine.GOOGLE}>{IaEngine.GOOGLE}</MenuItem>
-                                </Select>
-                            </FormControl>*/}
-                        </>
+                        <></>
                     ) : cameraStatus === 'captured' ? (
                         <Box pt={2} pb={5}>
                             <LinearProgress />

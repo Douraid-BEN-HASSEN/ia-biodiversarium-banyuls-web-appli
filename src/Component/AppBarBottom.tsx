@@ -4,7 +4,7 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Dialog, Menu, Typography, DialogTitle, ListItemAvatar, Avatar } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, Typography, DialogTitle } from '@mui/material';
 import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
 import { Fab, IconButton } from '@mui/material';
 
@@ -154,15 +154,7 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                         'aria-labelledby': 'basic-button',
                     }}
                 >
-                    <MenuItem onClick={handleClose}>{t('menu.server_options')}</MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            //
-                            handleClickDialogLanguageOpen();
-                        }}
-                    >
-                        {t('menu.language')}
-                    </MenuItem>
+                    <MenuItem onClick={handleClickDialogLanguageOpen}>{t('menu.language')}</MenuItem>
                     <LanguageDialog
                         selectedValue={selectedLanguage}
                         open={dialogLanguageOpen}

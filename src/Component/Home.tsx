@@ -9,7 +9,7 @@ import { Grid, Paper } from '@mui/material';
 import FishInformation from './FishInformation';
 import AppBarBottom from './AppBarBottom';
 
-const Main: React.FC = () => {
+const Home: React.FC = () => {
     const [isTakeScreenShot, setIsTakeScreenShot] = useState(false);
 
     const takeScreenShotHandler = (value: boolean): void => {
@@ -50,4 +50,4 @@ const Main: React.FC = () => {
     );
 };
 
-export default memo(Main);
+export default memo(Home);
