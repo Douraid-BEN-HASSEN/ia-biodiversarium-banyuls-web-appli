@@ -6,15 +6,15 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 
-import { Alert, Box, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Stack } from '@mui/material';
+import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+
+const SERVER_URL = 'http://10.3.1.37:5000';
 
 export enum IaEngine {
     'IMERIR' = 'Imerir',
     'GOOGLE' = 'google',
 }
-
-const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
 
 export interface CameraProps {
     isShoot: boolean;
@@ -119,12 +119,12 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 console.log(iaEngine);
                 console.log(_image);
                 // TODO: envoi serveur
+
                 axios
-                    .post(`SERVER_URL`, {
-                        image: _image,
-                        ia: iaEngine ? iaEngine : 'Imerir',
+                    .post(`${SERVER_URL}/mobile/analyze`, {
+                        content: _image,
                     })
-                    .then((res) => {
+                    .then(() => {
                         setCameraStatus('enabled');
                     });
             }

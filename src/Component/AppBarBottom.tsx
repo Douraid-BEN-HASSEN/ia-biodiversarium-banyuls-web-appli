@@ -4,7 +4,8 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Dialog, Menu, Typography, DialogTitle, ListItemAvatar, Avatar } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button } from '@mui/material';
+
 import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
 import { Fab, IconButton } from '@mui/material';
 
@@ -63,10 +64,12 @@ const LanguageDialog: React.FC<LanguageDialogProps> = (props) => {
             <List sx={{ pt: 0 }}>
                 {Languages.map((language) => (
                     <ListItem onClick={() => handleListItemClick(language)} key={language}>
-                        <Box mr={2}>
-                            <CodeToFlag code={language} />
-                        </Box>
-                        <ListItemText primary={CodeToLanguage[language]} />
+                        <Button>
+                            <Box mr={2}>
+                                <CodeToFlag code={language} />
+                            </Box>
+                            <ListItemText primary={CodeToLanguage[language]} />
+                        </Button>
                     </ListItem>
                 ))}
             </List>
@@ -108,7 +111,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     };
 
     const handleDialogLanguageClose = (value: Language) => {
-        console.log(value);
         setDialogLanguageOpen(false);
         setSelectedLanguage(value);
         i18n.changeLanguage(value).then();
@@ -157,7 +159,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                     <MenuItem onClick={handleClose}>{t('menu.server_options')}</MenuItem>
                     <MenuItem
                         onClick={() => {
-                            //
                             handleClickDialogLanguageOpen();
                         }}
                     >

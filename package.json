@@ -1,5 +1,5 @@
 {
-    "name": "web-appli",
+    "name": "fish-hub",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -24,6 +24,7 @@
         "react-bootstrap-icons": "^1.9.1",
         "react-dom": "^18.2.0",
         "react-i18next": "^12.0.0",
+        "react-router-dom": "^6.4.3",
         "react-scripts": "5.0.1",
         "react-webcam": "^7.0.1",
         "typescript": "^4.8.4",
