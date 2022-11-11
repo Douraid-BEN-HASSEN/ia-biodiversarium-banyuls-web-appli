@@ -11,6 +11,8 @@ import { Fab, IconButton } from '@mui/material';
 
 import { CodeToFlag } from './Country';
 
+import { test } from '../Api/Analyze';
+
 import { useTranslation } from 'react-i18next';
 import { Language, Languages, CodeToLanguage } from '../i18n/Language';
 
@@ -166,6 +168,15 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                         <Link color="inherit" href={'/about'} underline="none">
                             {t('menu.about')}
                         </Link>
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            test()
+                                .then((r) => console.log(r))
+                                .catch((r) => console.log(r));
+                        }}
+                    >
+                        test
                     </MenuItem>
                 </Menu>
             </Toolbar>
