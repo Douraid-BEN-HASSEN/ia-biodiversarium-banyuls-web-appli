@@ -5,10 +5,15 @@
         }
     },
     "camera": {
-        "pending": "Si us plau, activeu la càmera",
-        "disable": "La càmera està apagada! Permet la càmera",
-        "errored": "El vostre dispositiu no és compatible",
-        "captured": "Tractament en curs..."
+        "status" : {
+            "pending": "Si us plau, activeu la càmera",
+            "disable": "La càmera està apagada! Permet la càmera",
+            "errored": "El vostre dispositiu no és compatible"
+        },
+        "info" : {
+            "treatment": "Tractament en curs...",
+            "errored": "El servidor no va respondre"
+        }
     },
     "menu": {
         "about": "Sobre nosaltres",

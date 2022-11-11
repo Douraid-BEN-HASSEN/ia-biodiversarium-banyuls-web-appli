@@ -4,7 +4,7 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button, Link } from '@mui/material';
 
 import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
 import { Fab, IconButton } from '@mui/material';
@@ -162,8 +162,11 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                         open={dialogLanguageOpen}
                         onClose={handleDialogLanguageClose}
                     />
-                    <MenuItem href={'/about'}>{t('menu.about')}</MenuItem>
-                    {/*<MenuItem onClick={handleClose}>{t('menu.about')}</MenuItem>*/}
+                    <MenuItem>
+                        <Link color="inherit" href={'/about'} underline="none">
+                            {t('menu.about')}
+                        </Link>
+                    </MenuItem>
                 </Menu>
             </Toolbar>
         </AppBar>

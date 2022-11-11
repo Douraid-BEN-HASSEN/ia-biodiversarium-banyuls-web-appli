@@ -5,10 +5,15 @@
         }
     },
     "camera": {
-        "pending": "Please activate the camera",
-        "disable": "The camera is off! Please allow camera",
-        "errored": "Your device is not compatible",
-        "captured": "Ongoing treatment..."
+        "status" : {
+            "pending": "Please activate the camera",
+            "errored": "Your device is not compatible",
+            "disable": "The camera is off! Please allow camera"
+        },
+        "info" : {
+            "treatment": "Ongoing treatment...",
+            "errored": "The server did not respond"
+        }
     },
     "menu": {
         "about": "About Us",

@@ -4,17 +4,19 @@
  */
 
 import React, { useState, useEffect, memo } from 'react';
-import axios from 'axios';
 
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-const SERVER_URL = 'http://10.3.1.37:5000';
+import { analyze } from '../Api/Analyze';
 
 export interface CameraProps {
     isShoot: boolean;
+
     screenShotHandler(value: boolean): void;
+
     isCameraActive: boolean;
+
     cameraActiveHandler(value: boolean): void;
 }
 
@@ -23,16 +25,15 @@ const Camera: React.FC<CameraProps> = (Props) => {
 
     const { t } = useTranslation();
 
-    const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
-        'pending'
-    );
+    const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored'>('pending');
+    const [cameraInfo, setCameraInfo] = useState<'none' | 'treatment' | 'errored'>('none');
 
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [video, setVideo] = useState<HTMLVideoElement | null>(null);
     const [image, setImage] = useState<HTMLImageElement | null>(null);
 
     useEffect(() => {
-        if (cameraStatus !== 'enabled' && cameraStatus !== 'captured') return;
+        if (cameraStatus !== 'enabled' && cameraInfo !== 'treatment') return;
         if (isShoot) takeScreenshot();
 
         switchCamera();
@@ -73,7 +74,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
     const switchCamera = () => {
         if (video) {
             video.hidden = isShoot;
-            setCameraStatus(isShoot ? 'captured' : 'enabled');
+            setCameraInfo(isShoot ? 'treatment' : 'none');
         }
 
         if (image) {
@@ -83,7 +84,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
 
     const takeScreenshot = () => {
         if (cameraStatus === 'pending') return;
-        setCameraStatus('captured');
+        setCameraInfo('treatment');
         const canvas = document.createElement('canvas');
 
         if (video) {
@@ -105,15 +106,20 @@ const Camera: React.FC<CameraProps> = (Props) => {
                     console.log('screen');
                     image.src = _image;
                 }
-                console.log(_image);
+                // console.log(_image);
                 // TODO: envoi serveur
 
-                axios
-                    .post(`${SERVER_URL}/mobile/analyze`, {
-                        content: _image,
-                    })
+                analyze(_image)
                     .then(() => {
-                        setCameraStatus('enabled');
+                        console.log('response');
+                        setCameraInfo('treatment');
+                    })
+                    .catch(() => {
+                        console.log('no response');
+                        setCameraInfo('errored');
+                    })
+                    .finally(() => {
+                        console.log('');
                     });
             }
         }
@@ -137,23 +143,29 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 <Grid item xs={8} justifyContent="center">
                     {cameraStatus === 'pending' ? (
                         <Box pt={10} pb={10}>
-                            <Alert severity="info"> {t('camera.pending')} </Alert>
+                            <Alert severity="info"> {t('camera.status.pending')} </Alert>
                         </Box>
                     ) : cameraStatus === 'refused' ? (
                         <Box pt={10} pb={10}>
-                            <Alert severity="warning"> {t('camera.disable')} </Alert>
+                            <Alert severity="warning"> {t('camera.status.disable')} </Alert>
                         </Box>
                     ) : cameraStatus === 'errored' ? (
                         <Box pt={10} pb={10}>
-                            <Alert severity="error"> {t('camera.errored')} </Alert>
+                            <Alert severity="error"> {t('camera.status.errored')} </Alert>
                         </Box>
                     ) : cameraStatus === 'enabled' ? (
-                        <></>
-                    ) : cameraStatus === 'captured' ? (
-                        <Box pt={2} pb={5}>
-                            <LinearProgress />
-                            <Alert severity="success"> {t('camera.captured')} </Alert>
-                        </Box>
+                        cameraInfo === 'treatment' ? (
+                            <Box pt={2} pb={5}>
+                                <LinearProgress />
+                                <Alert severity="success"> {t('camera.info.treatment')} </Alert>
+                            </Box>
+                        ) : cameraInfo === 'errored' ? (
+                            <Box pt={2} pb={5}>
+                                <Alert severity="error"> {t('camera.info.errored')} </Alert>
+                            </Box>
+                        ) : (
+                            <></>
+                        )
                     ) : (
                         <Box pt={5} pb={5}>
                             <Alert severity="error"> ERROR </Alert>
