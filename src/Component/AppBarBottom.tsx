@@ -162,7 +162,8 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                         open={dialogLanguageOpen}
                         onClose={handleDialogLanguageClose}
                     />
-                    <MenuItem onClick={handleClose}>{t('menu.about')}</MenuItem>
+                    <MenuItem href={'/about'}>{t('menu.about')}</MenuItem>
+                    {/*<MenuItem onClick={handleClose}>{t('menu.about')}</MenuItem>*/}
                 </Menu>
             </Toolbar>
         </AppBar>
