@@ -13,6 +13,25 @@ export enum IaEngine {
     'GOOGLE' = 'google',
 }
 
+interface CamProps {
+    fishResult: {
+            id: number,
+            scientific_name: string,
+            name: string,
+            family: string,
+            description: { fr: string },
+            s_type: string,
+    }[];
+    setFishResult(value: {
+            id: number,
+            scientific_name: string,
+            name: string,
+            family: string,
+            description: { fr: string },
+            s_type: string,
+    }[]): void;
+}
+
 const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
 
 const videoConstraints = {
@@ -27,7 +46,9 @@ interface ScreenshotDimensions {
     height: number;
 }
 
-const Camera: React.FC = React.memo(() => {
+const Camera: React.FC<CamProps> = React.memo((Props) => {
+    const { fishResult, setFishResult } = Props;
+
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
     );
@@ -99,8 +120,21 @@ const Camera: React.FC = React.memo(() => {
                         ia: iaEngine ? iaEngine : 'google',
                     })
                     .then((res) => {
+                        const result = (res as unknown) as {
+                            id: number;
+                            scientific_name: string;
+                            name: string;
+                            family: string;
+                            description: {
+                                fr: string;
+                            };
+                            s_type: string;
+                        }[];
+                                            
+                        setFishResult(result);
                         setCameraStatus('enabled');
-                    });
+                    })
+                    .catch((err) => console.log(err));
             }
         }
     };
@@ -148,11 +182,34 @@ const Camera: React.FC = React.memo(() => {
                         <IconButton color="primary" aria-label="take Screenshot" onClick={takeScreenshot}>
                             <Album />
                         </IconButton>
+
+                        <table>
+                                <thead>
+                                        <tr>
+                                                <th>Nom scientifique</th>
+                                                <th>Nom</th>
+                                                <th>Famille</th>
+                                                <th>Description</th>
+                                                <th>Type</th>
+                                        </tr>
+                                </thead>
+                                {fishResult.map(result =>
+                                <tbody key={result.id}>
+                                        <tr>
+                                                <td>{result.scientific_name}</td>
+                                                <td>{result.name}</td>
+                                                <td>{result.family}</td>
+                                                <td>{result.description.fr}</td>
+                                                <td>{result.s_type}</td>
+                                        </tr>
+                                </tbody>
+                                )}
+                        </table>
                     </>
                 ) : (
                     <i>Traitement en cours...</i>
+                    
                 )}
-                {/*<button onClick={capture}>Capture photo</button>*/}
             </div>
         </>
     );
