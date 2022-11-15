@@ -10,6 +10,7 @@ i18next.use(LanguageDetector).init().then();
 
 import Home from './Component/Home';
 import About from './Component/About';
+import Zoom from './Zoom/resize_img';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/">
                 <Route index element={<Home />}></Route>
                 <Route path="/about" element={<About />} />
+                <Route path="/zoom" element={<Zoom />} />
             </Route>
         </Routes>
     );
