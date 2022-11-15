@@ -10,13 +10,22 @@ import FishInformation from './Component/FishInformation';
 function App() {
 
     const fishResultHandler = (value: {
-        id: number,
-        scientific_name: string,
-        name: string,
-        family: string,
-        description: { fr: string },
-        s_type: string,
-    }[]): void => {
+        detections: {
+            certainty: number,
+            detection: string,
+            position: {
+                bottomright: {
+                    x: number,
+                    y: number
+                },
+                topleft: {
+                    x: number,
+                    y: number
+                }
+            }
+        }[],
+        fishes: any
+}): void => {
         fishResultHandler(value);
     };
 
@@ -25,30 +34,7 @@ function App() {
             <DrawerAppBar />
             <Grid sx={{ p: 5 }} container justifyContent="center">
                 <Grid item>
-                    <Camera
-                    fishResult={[
-                        {
-                                id: 1,
-                                scientific_name: 'scientific_name',
-                                name: 'poisson 1',
-                                family: 'family',
-                                description: {
-                                    fr: 'DESCRIPTION'
-                                },
-                                s_type: 'string'
-                        },
-                        {
-                            id: 2,
-                            scientific_name: 'scientific_name',
-                            name: 'poisson 2',
-                            family: 'family',
-                            description: {
-                                fr: 'DESCRIPTION'
-                            },
-                            s_type: 'string'
-                        }
-                    ]}
-                    setFishResult={fishResultHandler}/>
+                    <Camera/>
                 </Grid>
 
                 <Grid item>

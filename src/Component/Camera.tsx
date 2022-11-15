@@ -4,53 +4,38 @@ import axios from 'axios';
 import { isEqual, map } from 'lodash';
 
 import { Alert, Button, FormControl, IconButton, InputLabel, MenuItem } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Settings, Cancel, Album } from '@mui/icons-material';
+import Select from '@mui/material/Select';
+import { Album } from '@mui/icons-material';
+import ResultTable from './Table';
 
 export enum IaEngine {
     'IMERIR' = 'Imerir',
     'GOOGLE' = 'google',
 }
 
-interface CamProps {
-    fishResult: {
-            id: number,
-            scientific_name: string,
-            name: string,
-            family: string,
-            description: { fr: string },
-            s_type: string,
-    }[];
-    setFishResult(value: {
-            id: number,
-            scientific_name: string,
-            name: string,
-            family: string,
-            description: { fr: string },
-            s_type: string,
-    }[]): void;
-}
-
-const listIaEngine = [IaEngine.IMERIR, IaEngine.GOOGLE];
-
-const videoConstraints = {
-    width: 1280,
-    height: 720,
-    // facingMode: 'user',
-    facingMode: { exact: 'environment' },
-};
-
-interface ScreenshotDimensions {
-    width: number;
-    height: number;
-}
-
-const Camera: React.FC<CamProps> = React.memo((Props) => {
-    const { fishResult, setFishResult } = Props;
+const Camera: React.FC = React.memo(() => {
 
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
         'pending'
     );
+
+    const [fishResult, setFishResult] = useState<{
+        detections: {
+            certainty: number,
+            detection: string,
+            position: {
+                bottomright: {
+                    x: number,
+                    y: number
+                },
+                topleft: {
+                    x: number,
+                    y: number
+                }
+            }
+        }[],
+        fishes: any
+    }>({ detections: [], fishes: {}});
 
     const [counter, setCounter] = useState(0);
     const [iaEngine, setIaEngine] = useState<IaEngine>(IaEngine.IMERIR);
@@ -109,31 +94,33 @@ const Camera: React.FC<CamProps> = React.memo((Props) => {
             if (cameraStatus === 'enabled' && ctx && video) {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const image = canvas.toDataURL('image/jpeg');
-
-                console.log(iaEngine);
-                console.log(image);
                 // TODO: envoi serveur
                 axios
-                    .post(`SERVER_URL`, {
-                        image: image,
-                        ia: iaEngine ? iaEngine : 'google',
-                    })
-                    .then((res) => {
-                        const result = (res as unknown) as {
-                            id: number;
-                            scientific_name: string;
-                            name: string;
-                            family: string;
-                            description: {
-                                fr: string;
+                .post('http://10.3.1.37:5000/api/mobile/analyze', {//http://10.3.1.37:5000/api/tablet/analyze
+                        content: image
+                })
+                .then((res) => {        
+                    const result = (res?.data as unknown) as {
+                        detections: {
+                            certainty: number;
+                            detection: string;
+                            position: {
+                                bottomright: {
+                                    x: number;
+                                    y: number;
+                                };
+                                topleft: {
+                                    x: number;
+                                    y: number;
+                                };
                             };
-                            s_type: string;
                         }[];
-                                            
-                        setFishResult(result);
-                        setCameraStatus('enabled');
-                    })
-                    .catch((err) => console.log(err));
+                        fishes: any;
+                    };
+                    setFishResult(result);
+                    setCameraStatus('enabled');
+                })
+                .catch((err) => setFishResult({ detections: [], fishes: {} }));
             }
         }
     };
@@ -182,32 +169,10 @@ const Camera: React.FC<CamProps> = React.memo((Props) => {
                             <Album />
                         </IconButton>
 
-                        <table>
-                                <thead>
-                                        <tr>
-                                                <th>Nom scientifique</th>
-                                                <th>Nom</th>
-                                                <th>Famille</th>
-                                                <th>Description</th>
-                                                <th>Type</th>
-                                        </tr>
-                                </thead>
-                                {fishResult.map(result =>
-                                <tbody key={result.id}>
-                                        <tr>
-                                                <td>{result.scientific_name}</td>
-                                                <td>{result.name}</td>
-                                                <td>{result.family}</td>
-                                                <td>{result.description.fr}</td>
-                                                <td>{result.s_type}</td>
-                                        </tr>
-                                </tbody>
-                                )}
-                        </table>
+                        <ResultTable fishResult={fishResult}/>
                     </>
                 ) : (
-                    <i>Traitement en cours...</i>
-                    
+                    <i>Traitement en cours...</i>                    
                 )}
             </div>
         </>
