@@ -21,13 +21,13 @@ export interface AnalyzedCoordinate {
 }
 
 export interface AnalyzedPosition {
-    bottonright: AnalyzedCoordinate;
+    bottomright: AnalyzedCoordinate;
     topleft: AnalyzedCoordinate;
 }
 
 export interface AnalyzedDetections {
     certainty: number;
-    detection: "string";
+    detection: string;
     position: AnalyzedPosition
 }
 
