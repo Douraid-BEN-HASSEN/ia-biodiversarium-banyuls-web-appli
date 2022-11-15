@@ -18,10 +18,11 @@ export interface CameraProps {
     isCameraActive: boolean;
 
     cameraActiveHandler(value: boolean): void;
+    itemsDataHandler(value: any): void;
 }
 
 const Camera: React.FC<CameraProps> = (Props) => {
-    const { isShoot, screenShotHandler, isCameraActive, cameraActiveHandler } = Props;
+    const { isShoot, screenShotHandler, isCameraActive, cameraActiveHandler, itemsDataHandler } = Props;
 
     const { t } = useTranslation();
 
@@ -110,16 +111,14 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 // TODO: envoi serveur
 
                 analyze(_image)
-                    .then(() => {
-                        console.log('response');
+                    .then((r) => {
+                        console.log(r);
                         setCameraInfo('treatment');
+                        itemsDataHandler(r);
                     })
                     .catch(() => {
                         console.log('no response');
                         setCameraInfo('errored');
-                    })
-                    .finally(() => {
-                        console.log('');
                     });
             }
         }

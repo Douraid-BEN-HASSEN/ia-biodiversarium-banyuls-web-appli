@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { SERVER_URL } from '../config';
+import { Language } from '../i18n/Language';
 
 export const test = () => {
     return axios.get(`${SERVER_URL}/api`);
@@ -31,6 +32,28 @@ export interface AnalyzedDetections {
     position: AnalyzedPosition
 }
 
+export interface FishsInfo {
+    [key:string]: FishInfo
+}
+
+export type FishDescription = {
+    [key in Language]: string;
+};
+
+export interface FishInfo {
+    id: number
+    description: any;
+    family: string;
+    name: string;
+    s_name: string;
+    type: string;
+    image: string;
+}
+
+export interface AnalyzedData {
+    detections: AnalyzedDetections[];
+    fishes: FishsInfo
+}
 
 /**
  * @param image base64
