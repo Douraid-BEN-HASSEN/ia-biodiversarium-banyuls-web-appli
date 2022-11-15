@@ -6,16 +6,6 @@ export const test = () => {
     return axios.get(`${SERVER_URL}/api`);
 };
 
-export interface AnalyzedFishs {
-    id: number,
-    scientific_name: string,
-    name: string,
-    family: string,
-    description: any,
-    s_type: string,
-    img: string
-}
-
 export interface AnalyzedCoordinate {
     x: number;
     y: number;
@@ -29,30 +19,34 @@ export interface AnalyzedPosition {
 export interface AnalyzedDetections {
     certainty: number;
     detection: string;
-    position: AnalyzedPosition
+    position: AnalyzedPosition;
 }
 
 export interface FishsInfo {
-    [key:string]: FishInfo
+    [key: string]: FishInfo;
 }
 
 export type FishDescription = {
-    [key in Language]: string;
+    [key in Language]?: string | undefined | null;
 };
 
 export interface FishInfo {
-    id: number
-    description: any;
+    id: number;
+    description: FishDescription;
     family: string;
     name: string;
     s_name: string;
     type: string;
-    image: string;
+    image: string | null;
 }
 
 export interface AnalyzedData {
     detections: AnalyzedDetections[];
-    fishes: FishsInfo
+    fishes: FishsInfo;
+}
+
+export interface AnalyzeResponse {
+    data: AnalyzedData;
 }
 
 /**
@@ -63,16 +57,6 @@ export const analyze = (image: string) => {
         content: image,
     });
 };
-
-export interface FishInformationObject {
-    id: number,
-    scientific_name: string,
-    name: string,
-    family: string,
-    description: any,
-    s_type: string,
-    img: string
-}
 
 export const findFish = (scientific_name: string) => {
     return axios.get(`${SERVER_URL}/api/species/${scientific_name}`);

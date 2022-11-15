@@ -8,7 +8,7 @@ import Camera from './Camera';
 import { Grid, Paper } from '@mui/material';
 import FishInformation from './FishInformation';
 import AppBarBottom from './AppBarBottom';
-import { FishInformationObject, FishsInfo } from '../Api/Analyze';
+import { AnalyzedData } from '../Api/Analyze';
 
 const Home: React.FC = () => {
     const [isTakeScreenShot, setIsTakeScreenShot] = useState(false);
@@ -23,11 +23,11 @@ const Home: React.FC = () => {
         setIsCameraActive(value);
     };
 
-    const [itemsData, setItemsData] = useState<FishsInfo[]>([]);
+    const [itemsData, setItemsData] = useState<AnalyzedData | null>(null);
 
-    const itemsDataHandler = (value: any[]) => {
+    const itemsDataHandler = (value: AnalyzedData) => {
         setItemsData(value);
-    }
+    };
 
     return (
         <>
@@ -44,7 +44,7 @@ const Home: React.FC = () => {
             <Paper>
                 <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12} justifyContent="center">
-                        <FishInformation itemsData={itemsData} />
+                        <FishInformation itemsData={itemsData?.fishes ?? {}} />
                     </Grid>
                 </Grid>
             </Paper>

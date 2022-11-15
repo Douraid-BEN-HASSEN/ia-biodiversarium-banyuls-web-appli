@@ -8,7 +8,8 @@ import React, { useState, useEffect, memo } from 'react';
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import { analyze } from '../Api/Analyze';
+import { analyze, AnalyzedData, AnalyzeResponse } from '../Api/Analyze';
+import { AxiosResponse } from 'axios';
 
 export interface CameraProps {
     isShoot: boolean;
@@ -18,18 +19,17 @@ export interface CameraProps {
     isCameraActive: boolean;
 
     cameraActiveHandler(value: boolean): void;
-    itemsDataHandler(value: any): void;
+    itemsDataHandler(value: AnalyzedData): void;
 }
 
 const Camera: React.FC<CameraProps> = (Props) => {
-    const { isShoot, screenShotHandler, isCameraActive, cameraActiveHandler, itemsDataHandler } = Props;
+    const { isShoot, isCameraActive, cameraActiveHandler, itemsDataHandler } = Props;
 
     const { t } = useTranslation();
 
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored'>('pending');
     const [cameraInfo, setCameraInfo] = useState<'none' | 'treatment' | 'errored'>('none');
 
-    const [stream, setStream] = useState<MediaStream | null>(null);
     const [video, setVideo] = useState<HTMLVideoElement | null>(null);
     const [image, setImage] = useState<HTMLImageElement | null>(null);
 
@@ -57,7 +57,6 @@ const Camera: React.FC<CameraProps> = (Props) => {
         navigator.mediaDevices
             .getUserMedia(constraints)
             .then((stream) => {
-                setStream(stream);
                 /* use the stream */
                 setCameraStatus('enabled');
                 if (video) {
@@ -109,12 +108,13 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 }
                 // console.log(_image);
                 // TODO: envoi serveur
+                setCameraInfo('treatment');
 
                 analyze(_image)
-                    .then((r) => {
+                    .then((r: AxiosResponse<AnalyzeResponse>) => {
                         console.log(r);
-                        setCameraInfo('treatment');
-                        itemsDataHandler(r);
+                        setCameraInfo('none');
+                        itemsDataHandler(r.data.data);
                     })
                     .catch(() => {
                         console.log('no response');

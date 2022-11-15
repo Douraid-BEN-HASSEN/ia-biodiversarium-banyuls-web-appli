@@ -22,5 +22,16 @@
         "languages": {
             "choice": "Trieu el vostre idioma"
         }
+    },
+    "fishInformation": {
+        "modal": {
+            "noInfo": "No s'ha trobat informació sobre el peix",
+            "noDescription": "Sense descripció"
+        }
+    },
+    "about": {
+        "text": {
+            "main": "IMERIR bgaxe"
+        }
     }
 }

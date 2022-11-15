@@ -2,10 +2,10 @@
  * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
  */
 import React, { memo } from 'react';
-import { useState } from 'react';
-import _ from 'lodash' // React
+import _ from 'lodash'; // React
 
 import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -13,39 +13,61 @@ import ImageListItemBar from '@mui/material/ImageListItemBar';
 import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
-import { FishsInfo } from '../Api/Analyze';
-
+import { FishInfo, FishsInfo } from '../Api/Analyze';
+import Skeleton from '@mui/material/Skeleton';
+import { Box, Paper } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { strToLanguage } from '../i18n/Language';
 
 interface FishInformationListProp {
-    itemsData: FishsInfo
+    itemsData: FishsInfo;
 }
 
-const FishInformationList: React.FC<FishInformationListProp> = (props) => {
+const styleModal = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+};
 
+const FishInformationList: React.FC<FishInformationListProp> = (props) => {
     const { itemsData } = props;
 
-    itemsData["fr"].description;
+    const { t, i18n } = useTranslation();
 
-    
+    const [openModal, setOpenModal] = React.useState(false);
+    const [fishInfo, setFishInfo] = React.useState<FishInfo | null>(null);
+
+    const handleOpenModal = (value: FishInfo) => {
+        setOpenModal(true);
+        setFishInfo(value);
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setFishInfo(null);
+    };
 
     return (
         <>
-            {
-                itemsData.length ? (
+            {Object.keys(itemsData).length ? (
+                <>
                     <ImageList>
                         <ImageListItem key="Subheader" cols={2}>
                             <ListSubheader component="div">Fish List</ListSubheader>
                         </ImageListItem>
                         {_.map(itemsData, (item, key) => (
-                            <ImageListItem key={key}>
-                                <img
-                                    src={`${item.image}`}
-                                    srcSet={`${item.image}`}
-                                    alt={item.name}
-                                    loading="lazy"
-                                    onClick={() => console.log("ok")}
+                            <ImageListItem key={key} onClick={() => handleOpenModal(item)}>
+                                {item.image ? (
+                                    <img
+                                        src={`${item.image}`}
+                                        srcSet={`${item.image}`}
+                                        alt={item.name}
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <Skeleton height={250} />
+                                )}
 
-                                />
                                 <ImageListItemBar
                                     title={item.name}
                                     subtitle={item.s_name}
@@ -61,12 +83,41 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
                             </ImageListItem>
                         ))}
                     </ImageList>
-                )
-                    : (<></>)
-                }
+                    <Box sx={{ height: 50 }}></Box>
+                    <Modal
+                        open={openModal}
+                        onClose={handleCloseModal}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={styleModal}>
+                            <Paper>
+                                <Box p={2}>
+                                    {fishInfo ? (
+                                        <>
+                                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                                {fishInfo.name}
+                                            </Typography>
+                                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                {fishInfo.description[strToLanguage(i18n.language)] ??
+                                                    fishInfo.description[strToLanguage('fr')] ??
+                                                    Object.values(fishInfo.description)[0] ??
+                                                    t('fishInformation.modal.noDescription')}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <>{t('fishInformation.modal.noInfo')}</>
+                                    )}
+                                </Box>
+                            </Paper>
+                        </Box>
+                    </Modal>
+                </>
+            ) : (
+                <></>
+            )}
         </>
-
     );
 };
 
-export default FishInformationList;
+export default memo(FishInformationList);
