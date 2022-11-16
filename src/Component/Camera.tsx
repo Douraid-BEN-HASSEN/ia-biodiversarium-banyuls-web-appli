@@ -19,6 +19,7 @@ export interface CameraProps {
     isCameraActive: boolean;
 
     cameraActiveHandler(value: boolean): void;
+
     itemsDataHandler(value: AnalyzedData): void;
 }
 
@@ -27,15 +28,24 @@ const Camera: React.FC<CameraProps> = (Props) => {
 
     const { t } = useTranslation();
 
-    const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored'>('pending');
+    const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored' | 'captured'>(
+        'pending'
+    );
     const [cameraInfo, setCameraInfo] = useState<'none' | 'treatment' | 'errored'>('none');
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const imageRef = useRef<HTMLImageElement | null>(null);
+
+    /* todo add square detection */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [analyzeData, setAnalyzeData] = useState<AnalyzedData | null>(null);
+    const dataHandler = (value: AnalyzedData) => {
+        setAnalyzeData(value);
+        itemsDataHandler(value);
+    };
 
     useEffect(() => {
-        if (cameraStatus !== 'enabled' && cameraInfo !== 'treatment') return;
+        if (cameraStatus !== 'enabled' && cameraStatus !== 'captured') return;
         if (isShoot) takeScreenshot();
 
         switchCamera();
@@ -73,48 +83,36 @@ const Camera: React.FC<CameraProps> = (Props) => {
 
     const switchCamera = () => {
         setCameraInfo(isShoot ? 'treatment' : 'none');
+        setCameraStatus(isShoot ? 'captured' : 'enabled');
     };
 
     const takeScreenshot = () => {
         if (cameraStatus === 'pending') return;
-        setCameraInfo('treatment');
-        const canvas = document.createElement('canvas');
 
-        if (videoRef.current) {
-            const video = videoRef.current;
-            video.hidden = true;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+        const canvas = canvasRef.current;
+        const video = videoRef.current;
 
-            const ctx = canvas.getContext('2d');
+        if (!video) return;
+        if (!canvas) return;
 
-            console.log(cameraStatus);
-            console.log(ctx);
-            console.log(video);
+        canvas.width = video.clientWidth;
+        canvas.height = video.clientHeight;
 
-            if (cameraStatus === 'enabled' && ctx && video) {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const _image = canvas.toDataURL('image/jpeg');
+        const ctx = canvas.getContext('2d');
+        if (cameraStatus === 'enabled' && ctx && video) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const _image = canvas.toDataURL('image/jpeg');
+            setCameraStatus('captured');
+            setCameraInfo('treatment');
 
-                if (imageRef.current) {
-                    console.log(_image);
-                    imageRef.current.src = _image;
-                }
-                // console.log(_image);
-                // TODO: envoi serveur
-                setCameraInfo('treatment');
-
-                analyze(_image)
-                    .then((r: AxiosResponse<AnalyzeResponse>) => {
-                        console.log(r);
-                        setCameraInfo('none');
-                        itemsDataHandler(r.data.data);
-                    })
-                    .catch(() => {
-                        console.log('no response');
-                        setCameraInfo('errored');
-                    });
-            }
+            analyze(_image)
+                .then((r: AxiosResponse<AnalyzeResponse>) => {
+                    setCameraInfo('none');
+                    dataHandler(r.data.data);
+                })
+                .catch(() => {
+                    setCameraInfo('errored');
+                });
         }
     };
 
@@ -123,14 +121,14 @@ const Camera: React.FC<CameraProps> = (Props) => {
             <Grid>
                 <video
                     muted={true}
-                    hidden={cameraInfo !== 'none' || cameraStatus !== 'enabled'}
+                    hidden={cameraStatus !== 'enabled'}
                     width={'100%'}
                     height={'100%'}
                     autoPlay
                     playsInline
                     ref={videoRef}
                 />
-                <img hidden={cameraInfo !== 'treatment'} alt={'img'} width={'100%'} height={'100%'} ref={imageRef} />
+                <canvas hidden={cameraStatus !== 'captured'} width={'100%'} height={'100%'} ref={canvasRef} />
             </Grid>
             <Grid item xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
@@ -146,7 +144,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
                         <Box pt={10} pb={10}>
                             <Alert severity="error"> {t('camera.status.errored')} </Alert>
                         </Box>
-                    ) : cameraStatus === 'enabled' ? (
+                    ) : cameraStatus === 'enabled' || cameraStatus === 'captured' ? (
                         cameraInfo === 'treatment' ? (
                             <Box pt={2} pb={5}>
                                 <LinearProgress />
