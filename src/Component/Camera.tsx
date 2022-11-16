@@ -3,7 +3,7 @@
  * @author Alexis DEVLEESCHAUWER <alexis@devleeschauwer.fr>
  */
 
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
 
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -30,8 +30,9 @@ const Camera: React.FC<CameraProps> = (Props) => {
     const [cameraStatus, setCameraStatus] = useState<'pending' | 'enabled' | 'refused' | 'errored'>('pending');
     const [cameraInfo, setCameraInfo] = useState<'none' | 'treatment' | 'errored'>('none');
 
-    const [video, setVideo] = useState<HTMLVideoElement | null>(null);
-    const [image, setImage] = useState<HTMLImageElement | null>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const imageRef = useRef<HTMLImageElement | null>(null);
 
     useEffect(() => {
         if (cameraStatus !== 'enabled' && cameraInfo !== 'treatment') return;
@@ -58,10 +59,9 @@ const Camera: React.FC<CameraProps> = (Props) => {
             .getUserMedia(constraints)
             .then((stream) => {
                 /* use the stream */
-                setCameraStatus('enabled');
-                if (video) {
-                    video.srcObject = stream;
-                    video.oncanplay = () => (video.hidden = false);
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    videoRef.current.oncanplay = () => setCameraStatus('enabled');
                 }
             })
             .catch((err) => {
@@ -72,14 +72,7 @@ const Camera: React.FC<CameraProps> = (Props) => {
     };
 
     const switchCamera = () => {
-        if (video) {
-            video.hidden = isShoot;
-            setCameraInfo(isShoot ? 'treatment' : 'none');
-        }
-
-        if (image) {
-            image.hidden = !isShoot;
-        }
+        setCameraInfo(isShoot ? 'treatment' : 'none');
     };
 
     const takeScreenshot = () => {
@@ -87,7 +80,8 @@ const Camera: React.FC<CameraProps> = (Props) => {
         setCameraInfo('treatment');
         const canvas = document.createElement('canvas');
 
-        if (video) {
+        if (videoRef.current) {
+            const video = videoRef.current;
             video.hidden = true;
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -102,9 +96,9 @@ const Camera: React.FC<CameraProps> = (Props) => {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const _image = canvas.toDataURL('image/jpeg');
 
-                if (image) {
-                    console.log('screen');
-                    image.src = _image;
+                if (imageRef.current) {
+                    console.log(_image);
+                    imageRef.current.src = _image;
                 }
                 // console.log(_image);
                 // TODO: envoi serveur
@@ -129,14 +123,14 @@ const Camera: React.FC<CameraProps> = (Props) => {
             <Grid>
                 <video
                     muted={true}
-                    hidden={true}
+                    hidden={cameraInfo !== 'none' || cameraStatus !== 'enabled'}
                     width={'100%'}
                     height={'100%'}
                     autoPlay
                     playsInline
-                    ref={(ref) => setVideo(ref)}
+                    ref={videoRef}
                 />
-                <img hidden={true} alt={'img'} width={'100%'} height={'100%'} ref={(ref) => setImage(ref)} />
+                <img hidden={cameraInfo !== 'treatment'} alt={'img'} width={'100%'} height={'100%'} ref={imageRef} />
             </Grid>
             <Grid item xs={12} container justifyContent="center">
                 <Grid item xs={8} justifyContent="center">
