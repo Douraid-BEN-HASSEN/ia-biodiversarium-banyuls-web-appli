@@ -41,13 +41,18 @@ const Home: React.FC = () => {
                 />
             </Paper>
 
-            <Paper>
-                <Grid container justifyContent="center" spacing={2}>
-                    <Grid item xs={12} justifyContent="center">
-                        <FishInformation itemsData={itemsData?.fishes ?? {}} />
+            {itemsData ? (
+                <Paper>
+                    <Grid container justifyContent="center" spacing={2}>
+                        <Grid item xs={12} justifyContent="center">
+                            <FishInformation itemsData={itemsData?.fishes ?? {}} />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Paper>
+                </Paper>
+            ) : (
+                <></>
+            )}
+
             <AppBarBottom
                 isShoot={isTakeScreenShot}
                 screenShotHandler={takeScreenShotHandler}
