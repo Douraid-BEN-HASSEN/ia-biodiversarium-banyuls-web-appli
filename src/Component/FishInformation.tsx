@@ -1,5 +1,5 @@
 /**
- * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
+ *@author Essahbi Zakarya <zakarya.essahbi@imerir.com>
  */
 import React, { memo } from 'react';
 import _ from 'lodash'; // React
