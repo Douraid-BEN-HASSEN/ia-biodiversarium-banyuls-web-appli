@@ -8,8 +8,38 @@ import React, { useState, useEffect, memo, useRef } from 'react';
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import { analyze, AnalyzedData, AnalyzeResponse } from '../Api/Analyze';
+import { analyze, AnalyzedData, AnalyzedDetections, AnalyzeResponse } from '../Api/Analyze';
 import { AxiosResponse } from 'axios';
+
+const drawSquare = (canvas: HTMLCanvasElement, fishDetected: AnalyzedDetections) => {
+    const ctx = canvas.getContext('2d');
+
+    const name = fishDetected.detection;
+    const pourcent = fishDetected.certainty * 100;
+    const posX = fishDetected.position.topleft.x;
+    const posY = fishDetected.position.topleft.y;
+    const width = fishDetected.position.bottomright.x - posX;
+    const height = fishDetected.position.bottomright.y - posY;
+
+    if (ctx !== null) {
+        ctx.beginPath();
+        ctx.fillStyle = 'red';
+        ctx.strokeStyle = 'red';
+
+        // ctx?.moveTo(30, 96);
+        ctx.strokeRect(posX, posY, width, height);
+        ctx.fillText(name, posX, fishDetected.position.bottomright.y + 15);
+        ctx.fillText(
+            pourcent.toFixed(0).toString() + ' %',
+            fishDetected.position.bottomright.x - 20,
+            fishDetected.position.bottomright.y + 15
+        );
+
+        ctx.font = '18px arial';
+
+        ctx.stroke();
+    }
+};
 
 export interface CameraProps {
     isShoot: boolean;
@@ -40,6 +70,12 @@ const Camera: React.FC<CameraProps> = (Props) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [analyzeData, setAnalyzeData] = useState<AnalyzedData | null>(null);
     const dataHandler = (value: AnalyzedData) => {
+        if (canvasRef.current) {
+            value.detections.forEach((a) => {
+                if (canvasRef.current) drawSquare(canvasRef.current, a);
+            });
+        }
+
         setAnalyzeData(value);
         itemsDataHandler(value);
     };
