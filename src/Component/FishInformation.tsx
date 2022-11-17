@@ -24,10 +24,14 @@ interface FishInformationListProp {
 }
 
 const styleModal = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: 'absolute',
+    top: '10%',
+    bottom: '10%',
+    left: '10%',
+    right: '10%',
+    overflow: 'scroll',
+    height: '80%',
+    display: 'block',
 };
 
 const FishInformationList: React.FC<FishInformationListProp> = (props) => {
@@ -85,12 +89,13 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
                     </ImageList>
                     <Box sx={{ height: 50 }}></Box>
                     <Modal
+                        sx={styleModal}
                         open={openModal}
                         onClose={handleCloseModal}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <Box sx={styleModal}>
+                        <Box>
                             <Paper>
                                 <Box p={2}>
                                     {fishInfo ? (
