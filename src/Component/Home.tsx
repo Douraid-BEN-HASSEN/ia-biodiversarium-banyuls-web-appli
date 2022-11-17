@@ -171,6 +171,7 @@ const Home: React.FC = () => {
         getDocAllFish()
             .then((r: AxiosResponse<AnalyzeResponse>) => {
                 console.log(r);
+                setSpeciesDoc(r.data);
             })
             .catch(() => {
                 setSpeciesDoc(defaultDatas.data);
