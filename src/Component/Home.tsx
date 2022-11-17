@@ -136,7 +136,7 @@ const defaultDatas = {
             name: 'Corb',
             s_name: 'Sciaena umbra',
             type: 'moving',
-        },
+        }, 
     ],
 } as any;
 
@@ -190,11 +190,23 @@ const Home: React.FC = () => {
                 />
             </Paper>
 
-            {itemsData ? (
+            {itemsData || showSearchList ? (
                 <Paper>
                     <Grid container justifyContent="center" spacing={2}>
                         <Grid item xs={12} justifyContent="center">
-                            <FishInformation itemsData={itemsData?.fishes ?? {}} />
+                            {showSearchList ? (
+                                <FishInformation
+                                    itemsData={speciesDoc.filter(
+                                        (fish: fishDescription) =>
+                                            fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
+                                            fish.s_name.toLowerCase().includes(valueSearchField.toLowerCase())
+                                    )}
+                                />
+                            ) : (
+                                <>
+                                <FishInformation itemsData={itemsData?.fishes ?? {}} />
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                 </Paper>
@@ -236,8 +248,7 @@ const Home: React.FC = () => {
                                         disablePadding
                                         key={index}
                                         style={{
-                                            borderBottom:
-                                                index < defaultDatas.data.length - 1 ? '1px solid black' : '',
+                                            borderBottom: index < defaultDatas.data.length - 1 ? '1px solid black' : '',
                                             textAlign: 'center',
                                         }}
                                     >

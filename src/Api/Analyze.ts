@@ -63,5 +63,5 @@ export const findFish = (scientific_name: string) => {
 };
 
 export const getDocAllFish = () => {
-    return axios.get(`${SERVER_URL}/api/species/`);
+    return axios.get(`${SERVER_URL}/api/species`);
 };
