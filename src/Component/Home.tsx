@@ -136,7 +136,7 @@ const defaultDatas = {
             name: 'Corb',
             s_name: 'Sciaena umbra',
             type: 'moving',
-        }, 
+        },
     ],
 } as any;
 
@@ -204,7 +204,7 @@ const Home: React.FC = () => {
                                 />
                             ) : (
                                 <>
-                                <FishInformation itemsData={itemsData?.fishes ?? {}} />
+                                    <FishInformation itemsData={itemsData?.fishes ?? {}} />
                                 </>
                             )}
                         </Grid>
@@ -227,35 +227,30 @@ const Home: React.FC = () => {
                     }}
                     style={{ position: 'fixed', bottom: '64px', left: '0px', right: '0px', maxHeight: '300px' }}
                 >
-                    {typePrintListFish === 'grid' ? (
-                        <FishInformation
-                            itemsData={speciesDoc.filter(
-                                (fish: fishDescription) =>
-                                    fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
-                                    fish.s_name.toLowerCase().includes(valueSearchField.toLowerCase())
-                            )}
-                        />
-                    ) : (
-                        speciesDoc
-                            .filter(
-                                (fish: fishDescription) =>
-                                    fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
-                                    fish.s_name.toLowerCase().includes(valueSearchField.toLowerCase())
-                            )
-                            .map((fish: fishDescription, index: number) => {
-                                return (
-                                    <ListItem
-                                        disablePadding
-                                        key={index}
-                                        style={{
-                                            borderBottom: index < defaultDatas.data.length - 1 ? '1px solid black' : '',
-                                            textAlign: 'center',
-                                        }}
-                                    >
-                                        <ListItemText primary={fish.name + ' (' + fish.s_name + ')'} />
-                                    </ListItem>
-                                );
-                            })
+                    {typePrintListFish === 'list' && (
+                        <>
+                            {speciesDoc
+                                .filter(
+                                    (fish: fishDescription) =>
+                                        fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
+                                        fish.s_name.toLowerCase().includes(valueSearchField.toLowerCase())
+                                )
+                                .map((fish: fishDescription, index: number) => {
+                                    return (
+                                        <ListItem
+                                            disablePadding
+                                            key={index}
+                                            style={{
+                                                borderBottom:
+                                                    index < defaultDatas.data.length - 1 ? '1px solid black' : '',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <ListItemText primary={fish.name + ' (' + fish.s_name + ')'} />
+                                        </ListItem>
+                                    );
+                                })}
+                        </>
                     )}
                 </List>
             )}
