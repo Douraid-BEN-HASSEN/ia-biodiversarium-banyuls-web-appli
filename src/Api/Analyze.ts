@@ -61,3 +61,7 @@ export const analyze = (image: string) => {
 export const findFish = (scientific_name: string) => {
     return axios.get(`${SERVER_URL}/api/species/${scientific_name}`);
 };
+
+export const getDocAllFish = () => {
+    return axios.get(`${SERVER_URL}/api/species/`);
+};

@@ -101,7 +101,7 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
                                                 id="modal-modal-title"
                                                 variant="h6"
                                                 component="h2"
-                                                style={{ textAlign: 'center', fontWeight:'bold'}}
+                                                style={{ textAlign: 'center', fontWeight: 'bold' }}
                                             >
                                                 {fishInfo.name}
                                             </Typography>

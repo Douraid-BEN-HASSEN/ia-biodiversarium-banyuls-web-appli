@@ -11,7 +11,7 @@ import { Fab, IconButton } from '@mui/material';
 
 import { CodeToFlag } from './Country';
 
-import { test } from '../Api/Analyze';
+import { getDocAllFish, test } from '../Api/Analyze';
 
 import { useTranslation } from 'react-i18next';
 import { Language, Languages, CodeToLanguage } from '../i18n/Language';
@@ -21,9 +21,10 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { AnalyzeResponse } from '../Api/Analyze';
+import { AxiosResponse } from 'axios';
 
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
 
 const StyledFab = styled(Fab)({
     position: 'absolute',
@@ -83,19 +84,12 @@ const LanguageDialog: React.FC<LanguageDialogProps> = (props) => {
 
 export interface AppBarBottomProps {
     isShoot: boolean;
-
     screenShotHandler(value: boolean): void;
-
     isCameraActive: boolean;
-
     cameraActiveHandler(value: boolean): void;
-
     handleIsSearch(value: boolean): void;
-
     handleChangeSearchValue(value: string): void;
-
     typePrintList: 'list' | 'grid';
-
     handleChangeTypeOfPrintList(type: 'list' | 'grid'): void;
 }
 
@@ -127,7 +121,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     const [dialogLanguageOpen, setDialogLanguageOpen] = React.useState(false);
     const [selectedLanguage, setSelectedLanguage] = React.useState(Languages[0]);
     const [showSearchField, setShowSearchField] = React.useState(false);
-    const [valueSearchField, setValueSearchField] = React.useState('');
 
     const handleClickDialogLanguageOpen = () => {
         setDialogLanguageOpen(true);
@@ -173,7 +166,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                             width: '100%',
                         }}
                         onChange={(value: any) => {
-                            setValueSearchField(value.target.value);
                             handleChangeSearchValue(value.target.value);
                             handleChangeTypeOfPrintList('list');
                         }}
@@ -191,7 +183,6 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                         style={{ color: 'red' }}
                         color="inherit"
                         onClick={() => {
-                            setValueSearchField('');
                             handleChangeSearchValue('');
                             setShowSearchField(false);
                             Props.handleIsSearch(false);
@@ -205,19 +196,9 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
                     onClick={() => {
                         if (typePrintList === 'list') {
                             setShowSearchField(true);
-                            Props.handleIsSearch(true);
-                        } /*else {
-                            setShowSearchField(false);
-                            Props.handleIsSearch(false);
-                        }*/
-                        axios
-                            .get(`http://10.3.1.37:5000/api/species/`)
-                            .then((res: any) => {
-                                console.log(res);
-                            })
-                            .catch((error: any) => {
-                                console.log('error : ', error);
-                            });
+                            handleIsSearch(true);
+                        }
+
                     }}
                 >
                     <SearchIcon />

@@ -3,13 +3,14 @@
  * @author Alexis DEVLEESCHAUWER <alexis@devleeschauwer.fr>
  */
 
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 
 import Camera from './Camera';
 import { Grid, List, ListItem, ListItemText, Paper } from '@mui/material';
 import FishInformation from './FishInformation';
 import AppBarBottom from './AppBarBottom';
-import { AnalyzedData } from '../Api/Analyze';
+import { AnalyzedData, AnalyzeResponse, getDocAllFish } from '../Api/Analyze';
+import { AxiosResponse } from 'axios';
 
 type langObject = {
     en: string;
@@ -26,7 +27,7 @@ type fishDescription = {
     description: langObject;
 };
 
-const descriptionsFish = {
+const defaultDatas = {
     data: [
         {
             description: {
@@ -164,6 +165,19 @@ const Home: React.FC = () => {
 
     const [typePrintListFish, setPrintListFish] = useState<'list' | 'grid'>('list');
 
+    const [speciesDoc, setSpeciesDoc] = useState<any>(defaultDatas.data);
+
+    useEffect(() => {
+        getDocAllFish()
+            .then((r: AxiosResponse<AnalyzeResponse>) => {
+                console.log(r);
+            })
+            .catch(() => {
+                setSpeciesDoc(defaultDatas.data);
+                console.log('error');
+            });
+    }, []);
+
     return (
         <>
             <Paper>
@@ -203,14 +217,14 @@ const Home: React.FC = () => {
                 >
                     {typePrintListFish === 'grid' ? (
                         <FishInformation
-                            itemsData={descriptionsFish.data.filter(
+                            itemsData={speciesDoc.filter(
                                 (fish: fishDescription) =>
                                     fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
                                     fish.s_name.toLowerCase().includes(valueSearchField.toLowerCase())
                             )}
                         />
                     ) : (
-                        descriptionsFish.data
+                        speciesDoc
                             .filter(
                                 (fish: fishDescription) =>
                                     fish.name.toLowerCase().includes(valueSearchField.toLowerCase()) ||
@@ -223,7 +237,7 @@ const Home: React.FC = () => {
                                         key={index}
                                         style={{
                                             borderBottom:
-                                                index < descriptionsFish.data.length - 1 ? '1px solid black' : '',
+                                                index < defaultDatas.data.length - 1 ? '1px solid black' : '',
                                             textAlign: 'center',
                                         }}
                                     >
