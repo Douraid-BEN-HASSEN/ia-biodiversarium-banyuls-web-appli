@@ -1,36 +1,130 @@
 /**
  * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
  */
-
 import React, { memo } from 'react';
+import _ from 'lodash'; // React
 
-import { Box, Paper, Typography } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
 
-const FishInformation: React.FC = () => {
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import { FishInfo, FishsInfo } from '../Api/Analyze';
+import Skeleton from '@mui/material/Skeleton';
+import { Box, Paper } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { strToLanguage } from '../i18n/Language';
+
+interface FishInformationListProp {
+    itemsData: FishsInfo;
+}
+
+const styleModal = {
+    //position: 'absolute' as const,
+    //top: '50%',
+    //left: '50%',
+    //transform: 'translate(-50%, -50%)',
+    position: 'fixed',
+    top: '5%',
+    left: '5%',
+    width: '90%',
+    overflow: 'scroll',
+    maxHeight: '90%',
+};
+
+const FishInformationList: React.FC<FishInformationListProp> = (props) => {
+    const { itemsData } = props;
+
+    const { t, i18n } = useTranslation();
+
+    const [openModal, setOpenModal] = React.useState(false);
+    const [fishInfo, setFishInfo] = React.useState<FishInfo | null>(null);
+
+    const handleOpenModal = (value: FishInfo) => {
+        setOpenModal(true);
+        setFishInfo(value);
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setFishInfo(null);
+    };
+
     return (
-        <Paper>
-            <Box p={5}>
-                <Typography>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                    and scrambled it to make a type specimen book. It has survived not only five centuries, but also the
-                    leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
-                    with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                </Typography>
-                <Typography>
-                    Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-                    classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-                    professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words,
-                    consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical
-                    literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33
-                    of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This
-                    book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of
-                    Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-                </Typography>
-            </Box>
-        </Paper>
+        <>
+            {Object.keys(itemsData).length ? (
+                <>
+                    <ImageList>
+                        {_.map(itemsData, (item, key) => (
+                            <ImageListItem key={key} onClick={() => handleOpenModal(item)}>
+                                {item.image ? (
+                                    <img
+                                        src={`${item.image}`}
+                                        srcSet={`${item.image}`}
+                                        alt={item.name}
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <Skeleton height={250} />
+                                )}
+
+                                <ImageListItemBar
+                                    title={item.name}
+                                    subtitle={item.s_name}
+                                    actionIcon={
+                                        <IconButton
+                                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                            aria-label={`info about ${item.name}`}
+                                        >
+                                            <InfoIcon />
+                                        </IconButton>
+                                    }
+                                />
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                    <Box sx={{ height: 50 }}></Box>
+                    <Modal
+                        open={openModal}
+                        onClose={handleCloseModal}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={styleModal}>
+                            <Paper>
+                                <Box p={2}>
+                                    {fishInfo ? (
+                                        <>
+                                            <Typography
+                                                id="modal-modal-title"
+                                                variant="h6"
+                                                component="h2"
+                                                style={{ textAlign: 'center', fontWeight: 'bold' }}
+                                            >
+                                                {fishInfo.name}
+                                            </Typography>
+                                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                {fishInfo.description[strToLanguage(i18n.language)] ??
+                                                    fishInfo.description[strToLanguage('fr')] ??
+                                                    Object.values(fishInfo.description)[0] ??
+                                                    t('fishInformation.modal.noDescription')}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <>{t('fishInformation.modal.noInfo')}</>
+                                    )}
+                                </Box>
+                            </Paper>
+                        </Box>
+                    </Modal>
+                </>
+            ) : (
+                <></>
+            )}
+        </>
     );
 };
 
-export default memo(FishInformation);
+export default memo(FishInformationList);

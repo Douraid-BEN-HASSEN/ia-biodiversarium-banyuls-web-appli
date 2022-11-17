@@ -11,3 +11,11 @@ export const CodeToLanguage = {
     fr: 'Français',
     ca: 'Catalan',
 };
+
+export const strToLanguage = (strLang: string): Language => {
+    const tmp = strLang as Language;
+    if (Object.values(Language).includes(tmp)) {
+        return tmp;
+    }
+    return Language.FR;
+};

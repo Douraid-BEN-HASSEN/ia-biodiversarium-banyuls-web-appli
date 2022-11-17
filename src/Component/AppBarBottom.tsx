@@ -4,14 +4,14 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button, Link } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button, Link, Input } from '@mui/material';
 
 import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
 import { Fab, IconButton } from '@mui/material';
 
 import { CodeToFlag } from './Country';
 
-import { test } from '../Api/Analyze';
+import { getDocAllFish, test } from '../Api/Analyze';
 
 import { useTranslation } from 'react-i18next';
 import { Language, Languages, CodeToLanguage } from '../i18n/Language';
@@ -20,6 +20,9 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { AnalyzeResponse } from '../Api/Analyze';
+import { AxiosResponse } from 'axios';
 
 import { styled } from '@mui/material/styles';
 
@@ -81,16 +84,26 @@ const LanguageDialog: React.FC<LanguageDialogProps> = (props) => {
 
 export interface AppBarBottomProps {
     isShoot: boolean;
-
     screenShotHandler(value: boolean): void;
-
     isCameraActive: boolean;
-
     cameraActiveHandler(value: boolean): void;
+    handleIsSearch(value: boolean): void;
+    handleChangeSearchValue(value: string): void;
+    typePrintList: 'list' | 'grid';
+    handleChangeTypeOfPrintList(type: 'list' | 'grid'): void;
 }
 
 const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
-    const { isShoot, isCameraActive, cameraActiveHandler, screenShotHandler } = Props;
+    const {
+        handleChangeSearchValue,
+        isShoot,
+        isCameraActive,
+        cameraActiveHandler,
+        screenShotHandler,
+        handleIsSearch,
+        typePrintList,
+        handleChangeTypeOfPrintList,
+    } = Props;
 
     const { t, i18n } = useTranslation();
 
@@ -107,6 +120,7 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     /** hooks language dialoge */
     const [dialogLanguageOpen, setDialogLanguageOpen] = React.useState(false);
     const [selectedLanguage, setSelectedLanguage] = React.useState(Languages[0]);
+    const [showSearchField, setShowSearchField] = React.useState(false);
 
     const handleClickDialogLanguageOpen = () => {
         setDialogLanguageOpen(true);
@@ -121,22 +135,72 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     return (
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
-                {!isCameraActive ? (
-                    <StyledExtendedFab variant="extended" color="error" onClick={() => cameraActiveHandler(true)}>
-                        {t('appbar.camera.active')}
-                    </StyledExtendedFab>
-                ) : (
-                    <StyledFab color="success" aria-label="takeScreen">
-                        {isShoot ? (
-                            <PlayArrowIcon onClick={() => screenShotHandler(!isShoot)} />
+                {!showSearchField && (
+                    <>
+                        {!isCameraActive ? (
+                            <StyledExtendedFab
+                                variant="extended"
+                                color="error"
+                                onClick={() => cameraActiveHandler(true)}
+                            >
+                                {t('appbar.camera.active')}
+                            </StyledExtendedFab>
                         ) : (
-                            <PhotoCameraIcon onClick={() => screenShotHandler(!isShoot)} />
+                            <StyledFab color="success" aria-label="takeScreen">
+                                {isShoot ? (
+                                    <PlayArrowIcon onClick={() => screenShotHandler(!isShoot)} />
+                                ) : (
+                                    <PhotoCameraIcon onClick={() => screenShotHandler(!isShoot)} />
+                                )}
+                            </StyledFab>
                         )}
-                    </StyledFab>
+                    </>
+                )}
+                <Box sx={{ flexGrow: 1 }} />
+
+                {showSearchField && (
+                    <Input
+                        autoFocus
+                        style={{
+                            backgroundColor: 'white',
+                            width: '100%',
+                        }}
+                        onChange={(value: any) => {
+                            handleChangeSearchValue(value.target.value);
+                            handleChangeTypeOfPrintList('list');
+                        }}
+                        onKeyPress={(key: any) => {
+                            if (key.code === 'Enter') {
+                                setShowSearchField(true);
+                                Props.handleIsSearch(true);
+                            }
+                        }}
+                    />
                 )}
 
-                <Box sx={{ flexGrow: 1 }} />
-                <IconButton color="inherit">
+                {showSearchField && (
+                    <IconButton
+                        style={{ color: 'red' }}
+                        color="inherit"
+                        onClick={() => {
+                            handleChangeSearchValue('');
+                            setShowSearchField(false);
+                            Props.handleIsSearch(false);
+                        }}
+                    >
+                        <CancelIcon />
+                    </IconButton>
+                )}
+                <IconButton
+                    color="inherit"
+                    onClick={() => {
+                        if (typePrintList === 'list') {
+                            setShowSearchField(true);
+                            handleIsSearch(true);
+                        }
+
+                    }}
+                >
                     <SearchIcon />
                 </IconButton>
                 <IconButton

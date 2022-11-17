@@ -23,6 +23,12 @@
             "choice": "Choisissez votre langue"
         }
     },
+    "fishInformation": {
+        "modal": {
+            "noInfo": "Aucune information trouvée sur le poisson",
+            "noDescription": "Aucun description"
+        }
+    },
     "about": {
         "text": {
             "main": "IMERIR bgaxe"
