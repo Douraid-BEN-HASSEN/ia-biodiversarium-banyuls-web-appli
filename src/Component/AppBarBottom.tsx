@@ -4,7 +4,7 @@
 
 import React, { memo } from 'react';
 
-import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button, Link } from '@mui/material';
+import { Toolbar, Box, AppBar, Dialog, Menu, DialogTitle, Button, Link, Input } from '@mui/material';
 
 import { ListItemText, ListItem, List, MenuItem } from '@mui/material';
 import { Fab, IconButton } from '@mui/material';
@@ -20,8 +20,10 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
 
 const StyledFab = styled(Fab)({
     position: 'absolute',
@@ -87,10 +89,27 @@ export interface AppBarBottomProps {
     isCameraActive: boolean;
 
     cameraActiveHandler(value: boolean): void;
+
+    handleIsSearch(value: boolean): void;
+
+    handleChangeSearchValue(value: string): void;
+
+    typePrintList: 'list' | 'grid';
+
+    handleChangeTypeOfPrintList(type: 'list' | 'grid'): void;
 }
 
 const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
-    const { isShoot, isCameraActive, cameraActiveHandler, screenShotHandler } = Props;
+    const {
+        handleChangeSearchValue,
+        isShoot,
+        isCameraActive,
+        cameraActiveHandler,
+        screenShotHandler,
+        handleIsSearch,
+        typePrintList,
+        handleChangeTypeOfPrintList,
+    } = Props;
 
     const { t, i18n } = useTranslation();
 
@@ -107,6 +126,8 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     /** hooks language dialoge */
     const [dialogLanguageOpen, setDialogLanguageOpen] = React.useState(false);
     const [selectedLanguage, setSelectedLanguage] = React.useState(Languages[0]);
+    const [showSearchField, setShowSearchField] = React.useState(false);
+    const [valueSearchField, setValueSearchField] = React.useState('');
 
     const handleClickDialogLanguageOpen = () => {
         setDialogLanguageOpen(true);
@@ -121,22 +142,84 @@ const AppBarBottom: React.FC<AppBarBottomProps> = (Props) => {
     return (
         <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
-                {!isCameraActive ? (
-                    <StyledExtendedFab variant="extended" color="error" onClick={() => cameraActiveHandler(true)}>
-                        {t('appbar.camera.active')}
-                    </StyledExtendedFab>
-                ) : (
-                    <StyledFab color="success" aria-label="takeScreen">
-                        {isShoot ? (
-                            <PlayArrowIcon onClick={() => screenShotHandler(!isShoot)} />
+                {!showSearchField && (
+                    <>
+                        {!isCameraActive ? (
+                            <StyledExtendedFab
+                                variant="extended"
+                                color="error"
+                                onClick={() => cameraActiveHandler(true)}
+                            >
+                                {t('appbar.camera.active')}
+                            </StyledExtendedFab>
                         ) : (
-                            <PhotoCameraIcon onClick={() => screenShotHandler(!isShoot)} />
+                            <StyledFab color="success" aria-label="takeScreen">
+                                {isShoot ? (
+                                    <PlayArrowIcon onClick={() => screenShotHandler(!isShoot)} />
+                                ) : (
+                                    <PhotoCameraIcon onClick={() => screenShotHandler(!isShoot)} />
+                                )}
+                            </StyledFab>
                         )}
-                    </StyledFab>
+                    </>
+                )}
+                <Box sx={{ flexGrow: 1 }} />
+
+                {showSearchField && (
+                    <Input
+                        autoFocus
+                        style={{
+                            backgroundColor: 'white',
+                            width: '100%',
+                        }}
+                        onChange={(value: any) => {
+                            setValueSearchField(value.target.value);
+                            handleChangeSearchValue(value.target.value);
+                            handleChangeTypeOfPrintList('list');
+                        }}
+                        onKeyPress={(key: any) => {
+                            if (key.code === 'Enter') {
+                                setShowSearchField(true);
+                                Props.handleIsSearch(true);
+                            }
+                        }}
+                    />
                 )}
 
-                <Box sx={{ flexGrow: 1 }} />
-                <IconButton color="inherit">
+                {showSearchField && (
+                    <IconButton
+                        style={{ color: 'red' }}
+                        color="inherit"
+                        onClick={() => {
+                            setValueSearchField('');
+                            handleChangeSearchValue('');
+                            setShowSearchField(false);
+                            Props.handleIsSearch(false);
+                        }}
+                    >
+                        <CancelIcon />
+                    </IconButton>
+                )}
+                <IconButton
+                    color="inherit"
+                    onClick={() => {
+                        if (typePrintList === 'list') {
+                            setShowSearchField(true);
+                            Props.handleIsSearch(true);
+                        } /*else {
+                            setShowSearchField(false);
+                            Props.handleIsSearch(false);
+                        }*/
+                        axios
+                            .get(`http://10.3.1.37:5000/api/species/`)
+                            .then((res: any) => {
+                                console.log(res);
+                            })
+                            .catch((error: any) => {
+                                console.log('error : ', error);
+                            });
+                    }}
+                >
                     <SearchIcon />
                 </IconButton>
                 <IconButton

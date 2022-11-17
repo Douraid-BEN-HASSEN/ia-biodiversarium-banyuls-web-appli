@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import { FishInfo, FishsInfo } from '../Api/Analyze';
@@ -24,10 +23,16 @@ interface FishInformationListProp {
 }
 
 const styleModal = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    //position: 'absolute' as const,
+    //top: '50%',
+    //left: '50%',
+    //transform: 'translate(-50%, -50%)',
+    position: 'fixed',
+    top: '5%',
+    left: '5%',
+    width: '90%',
+    overflow: 'scroll',
+    maxHeight: '90%',
 };
 
 const FishInformationList: React.FC<FishInformationListProp> = (props) => {
@@ -52,9 +57,6 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
             {Object.keys(itemsData).length ? (
                 <>
                     <ImageList>
-                        <ImageListItem key="Subheader" cols={2}>
-                            <ListSubheader component="div">Fish List</ListSubheader>
-                        </ImageListItem>
                         {_.map(itemsData, (item, key) => (
                             <ImageListItem key={key} onClick={() => handleOpenModal(item)}>
                                 {item.image ? (
@@ -95,7 +97,12 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
                                 <Box p={2}>
                                     {fishInfo ? (
                                         <>
-                                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                            <Typography
+                                                id="modal-modal-title"
+                                                variant="h6"
+                                                component="h2"
+                                                style={{ textAlign: 'center', fontWeight:'bold'}}
+                                            >
                                                 {fishInfo.name}
                                             </Typography>
                                             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
