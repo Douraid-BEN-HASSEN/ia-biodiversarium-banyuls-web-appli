@@ -1,1 +1,1 @@
-export const SERVER_URL = 'http://10.3.1.37';
+export const API_URL = process.env.REACT_APP_API_URL;

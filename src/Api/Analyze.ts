@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { SERVER_URL } from '../config';
+import { API_URL } from '../config';
 import { Language } from '../i18n/Language';
 
 export const test = () => {
-    return axios.get(`${SERVER_URL}/api`);
+    return axios.get(`${API_URL}/api`);
 };
 
 export interface AnalyzedCoordinate {
@@ -53,15 +53,15 @@ export interface AnalyzeResponse {
  * @param image base64
  */
 export const analyze = (image: string) => {
-    return axios.post(`${SERVER_URL}/api/mobile/analyze`, {
+    return axios.post(`${API_URL}/api/mobile/analyze`, {
         content: image,
     });
 };
 
 export const findFish = (scientific_name: string) => {
-    return axios.get(`${SERVER_URL}/api/species/${scientific_name}`);
+    return axios.get(`${API_URL}/api/species/${scientific_name}`);
 };
 
 export const getDocAllFish = () => {
-    return axios.get(`${SERVER_URL}/api/species`);
+    return axios.get(`${API_URL}/api/species`);
 };

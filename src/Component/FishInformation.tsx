@@ -1,5 +1,5 @@
 /**
- * @author Douraïd BEN HASSEN <douraid.benhassen@gmail.com>
+ * @author Essahbi Zakarya <zakarya.essahbi@imerir.com>
  */
 import React, { memo } from 'react';
 import _ from 'lodash'; // React
@@ -23,10 +23,6 @@ interface FishInformationListProp {
 }
 
 const styleModal = {
-    //position: 'absolute' as const,
-    //top: '50%',
-    //left: '50%',
-    //transform: 'translate(-50%, -50%)',
     position: 'fixed',
     top: '5%',
     left: '5%',
@@ -87,12 +83,13 @@ const FishInformationList: React.FC<FishInformationListProp> = (props) => {
                     </ImageList>
                     <Box sx={{ height: 50 }}></Box>
                     <Modal
+                        sx={styleModal}
                         open={openModal}
                         onClose={handleCloseModal}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <Box sx={styleModal}>
+                        <Box>
                             <Paper>
                                 <Box p={2}>
                                     {fishInfo ? (
