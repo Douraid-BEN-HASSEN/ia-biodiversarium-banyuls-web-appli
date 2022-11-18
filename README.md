@@ -1,46 +1,37 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Web appli pour la détection d'espèces
 
-## Available Scripts
+## Description générale
+Interface web responsive qui permet de réaliser deux fonctionnalités : <br/>
+1 ) Prendre une photo une / des espèces ( végétaux et animaux) , interoger l'intelligence artificielle via une API, et obtenir l'identification des espèces sur la photo. <br/>
+Par la suite, l'interface proposera à l'utilisateur une liste sous forme de grilles de toutes les espèces détectées. L'utilisateur pourra cliquer sur l'une des espèces afin d'afficher une modale contenant une documentation de l'espèce sélectionnée. <br/>
+2 ) Sans prendre de photos, l'utilisateur peut faire une recherche parmi toutes les espèces identifiables, et accéder à une page de documentation sur l'espèce recherchée. 
 
-In the project directory, you can run:
+## Routes utilisées sur l'API pour les requêtes 
+1) {API_URL}/api/mobile/analyze : POST : Prends en paramètre une image en base 64 <br/> Renvoie la réponse de l'analyse de l'image par L'API ( éléments détectés, position, et valeur de certitude pour l'élément sélectionné).   <br/>
+2) {API_ URL}/api/species/${scientific_name} : GET : Prends en paramètre le nom scientifique d'une espèce. <br/> Renvoie la documentation propre à l'espèce. Contient : la famille de l'espèce, l'id de l'espèce, une image en base64, le nom et de nom scientifique de l'espèce, le type de l'espèce et une description. <br/>
+3) {API_ URL}/api/species : GET <br/> Renvoie la même chose que la requête précédente, mais pour toutes les espèces présentes dans la base de données. 
 
-### `npm start`
+## Technologies utilisées 
+1) React / Typescript pour le développement <br/>
+2) Librairie Material UI pour faire des interfaces plus faciles ( les modales, les boutons, etc ... ) <br/>
+3) Librairie AXIOS pour faire les requêtes à l'api
+4) Utilisations des HOOKS de React
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+ ## Fonctionnalités de l'appli-web
+ 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+ - Traduction en 3 langues différentes ( Français , Anglais, Catalan) 
+ - Responsive (utilisable à la fois à l'horizontale comme à la verticale) 
+ - Utilise des requêtes pour communiquer avec l'api qui permet par la suite de communiquer avec intelligence artificielle
+ - Utilise la caméra du smartphone afin de prendre des photos
+ - Sur ANDROID, peut être accessible comme une application, c'est à dire sur l'écran d'application du smartphone
+ - Permet d’accéder à la doc de toutes les espèces sans prendre aucune photo. 
+ - Le site web pourra être accessible pour tous les visiteurs de l'aquarium, le fait qu'il s'agisse d'un site web est un avantage car les visiteurs n'ont rien à installer pour profiter de l'application. 
+ - Un Dockerfile est fourni sur le GIT afin de faciliter le déploiement de l'appli web. 
+ 
+ ## Captures d'écran de l'application
+ ![Screen 1](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/1.png)
+![Screen 2](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/2.png)
+![Screen 3](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/3.png)
+![Screen 4](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/4.png)
