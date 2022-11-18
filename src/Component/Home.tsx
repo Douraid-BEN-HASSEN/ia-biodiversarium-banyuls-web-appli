@@ -169,12 +169,10 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         getDocAllFish()
-            .then((r: AxiosResponse<AnalyzeResponse>) => {
-                console.log(r);
-            
+            .then((r: any) => {
+                setSpeciesDoc(r.data.data);
             })
             .catch(() => {
-                setSpeciesDoc(defaultDatas.data);
                 console.log('error');
             });
     }, []);
