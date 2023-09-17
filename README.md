@@ -31,7 +31,7 @@ Par la suite, l'interface proposera à l'utilisateur une liste sous forme de gri
  - Un Dockerfile est fourni sur le GIT afin de faciliter le déploiement de l'appli web. 
  
  ## Captures d'écran de l'application
- ![Screen 1](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/1.png)
-![Screen 2](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/2.png)
-![Screen 3](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/3.png)
-![Screen 4](https://gitlab.imerir.com/ia-biodiversarium-banyuls/web-appli/-/raw/dev/screenshoots/4.png)
+ ![Screen 1](./images/1.png)
+![Screen 2](./images/2.png)
+![Screen 3](./images/3.png)
+![Screen 4](./images/4.png)
